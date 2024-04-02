@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: MajorGraduation
+  data:
+    redis:
+      host: 192.168.198.128
+      password: xx158263
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/major_graduation
+    username: root
+    password: xuxin158263
+logging:
+  level:
+    com.chz.mapper: debug
