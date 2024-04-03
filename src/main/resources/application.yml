@@ -12,4 +12,16 @@ spring:
     password: xuxin158263
 logging:
   level:
-    com.chz.mapper: debug
+    com:
+      baomidou:
+        mybatisplus: DEBUG
+    cn:
+      scut:
+        xx:
+          majorgraduation:
+            dao: DEBUG
+
+mybatis-plus:
+  #mapper-locations: classpath*:/mappings/**/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl

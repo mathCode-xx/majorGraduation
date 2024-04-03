@@ -15,7 +15,7 @@ public class GlobalInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         StringBuffer url = request.getRequestURL();
-        log.warn(url.toString());
+        log.info("访问接口：" + url.toString());
         return true;
     }
 }
