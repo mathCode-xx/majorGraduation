@@ -1,5 +1,6 @@
 package cn.scut.xx.majorgraduation.dao.po;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -17,7 +18,7 @@ public class RolePO {
     /**
      * 主键
      */
-    @TableId("role_id")
+    @TableId(value = "role_id", type = IdType.AUTO)
     private Long roleId;
 
     /**
