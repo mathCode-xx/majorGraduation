@@ -1,5 +1,6 @@
 package cn.scut.xx.majorgraduation.service;
 
+import cn.scut.xx.majorgraduation.pojo.dto.req.RoleModuleRemoveReqDTO;
 import cn.scut.xx.majorgraduation.pojo.dto.req.RoleModuleSaveReqDTO;
 import cn.scut.xx.majorgraduation.pojo.dto.req.RoleSaveReqDTO;
 
@@ -21,4 +22,11 @@ public interface IRoleService {
      * @param roleModuleSaveReqDTO 请求参数
      */
     void addModule(RoleModuleSaveReqDTO roleModuleSaveReqDTO);
+
+    /**
+     * 移除角色对模块的授权
+     *
+     * @param roleModuleRemoveReqDTO 请求参数
+     */
+    void removeModule(RoleModuleRemoveReqDTO roleModuleRemoveReqDTO);
 }

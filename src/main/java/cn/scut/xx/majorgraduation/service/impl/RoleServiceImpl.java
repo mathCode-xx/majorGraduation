@@ -10,9 +10,11 @@ import cn.scut.xx.majorgraduation.dao.mapper.RoleModuleMapper;
 import cn.scut.xx.majorgraduation.dao.po.ModulePO;
 import cn.scut.xx.majorgraduation.dao.po.RoleModulePO;
 import cn.scut.xx.majorgraduation.dao.po.RolePO;
+import cn.scut.xx.majorgraduation.pojo.dto.req.RoleModuleRemoveReqDTO;
 import cn.scut.xx.majorgraduation.pojo.dto.req.RoleModuleSaveReqDTO;
 import cn.scut.xx.majorgraduation.pojo.dto.req.RoleSaveReqDTO;
 import cn.scut.xx.majorgraduation.service.IRoleService;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
@@ -50,6 +52,27 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, RolePO> implements 
             roleModuleMapper.insert(roleModule);
         } catch (DuplicateKeyException e) {
             throw new ClientException("该角色已授权该模块，请勿重复操作！");
+        }
+    }
+
+    @Override
+    public void removeModule(RoleModuleRemoveReqDTO roleModuleRemoveReqDTO) {
+        LambdaQueryWrapper<RoleModulePO> query = new LambdaQueryWrapper<>();
+        Long roleModuleId = roleModuleRemoveReqDTO.getRoleModuleId();
+        if (roleModuleId != null && roleModuleId != 0) {
+            query.eq(RoleModulePO::getId, roleModuleId);
+        } else {
+            Long roleId = roleModuleRemoveReqDTO.getRoleId();
+            checkRoleThrow(roleId);
+            Long moduleId = roleModuleRemoveReqDTO.getModuleId();
+            checkModuleThrow(moduleId);
+
+            query.eq(RoleModulePO::getRoleId, roleId)
+                    .eq(RoleModulePO::getModuleId, moduleId);
+        }
+        int result = roleModuleMapper.delete(query);
+        if(result < 1) {
+            throw new ClientException("该角色并未授权该模块，无需删除！");
         }
     }
 
