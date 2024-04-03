@@ -1,4 +1,4 @@
-package cn.scut.xx.majorgraduation.redis.constant;
+package cn.scut.xx.majorgraduation.common.redis.constant;
 
 /**
  * redis常数，大多是key前缀

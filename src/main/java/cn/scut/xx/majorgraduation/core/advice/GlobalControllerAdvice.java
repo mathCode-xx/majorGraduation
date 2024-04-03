@@ -1,4 +1,4 @@
-package cn.scut.xx.majorgraduation.web.advice;
+package cn.scut.xx.majorgraduation.core.advice;
 
 import cn.scut.xx.majorgraduation.core.exception.AbstractException;
 import cn.scut.xx.majorgraduation.core.exception.ServiceException;

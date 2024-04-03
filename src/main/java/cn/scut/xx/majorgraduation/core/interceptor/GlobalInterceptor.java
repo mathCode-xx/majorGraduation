@@ -1,4 +1,4 @@
-package cn.scut.xx.majorgraduation.web.interceptor;
+package cn.scut.xx.majorgraduation.core.interceptor;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

@@ -14,7 +14,7 @@ import cn.scut.xx.majorgraduation.pojo.dto.req.UserRoleRemoveReqDTO;
 import cn.scut.xx.majorgraduation.pojo.dto.req.UserSaveReqDTO;
 import cn.scut.xx.majorgraduation.pojo.dto.req.UserSearchReqDTO;
 import cn.scut.xx.majorgraduation.pojo.dto.resp.UserRespDTO;
-import cn.scut.xx.majorgraduation.redis.constant.RedisConstant;
+import cn.scut.xx.majorgraduation.common.redis.constant.RedisConstant;
 import cn.scut.xx.majorgraduation.service.IUserService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;

@@ -1,6 +1,6 @@
-package cn.scut.xx.majorgraduation.web.config;
+package cn.scut.xx.majorgraduation.config.web;
 
-import cn.scut.xx.majorgraduation.web.interceptor.GlobalInterceptor;
+import cn.scut.xx.majorgraduation.core.interceptor.GlobalInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;

@@ -1,4 +1,4 @@
-package cn.scut.xx.majorgraduation.database.config;
+package cn.scut.xx.majorgraduation.config.database;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import org.apache.ibatis.reflection.MetaObject;

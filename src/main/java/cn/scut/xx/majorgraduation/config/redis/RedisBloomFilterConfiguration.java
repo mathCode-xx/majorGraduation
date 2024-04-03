@@ -1,4 +1,4 @@
-package cn.scut.xx.majorgraduation.redis.config;
+package cn.scut.xx.majorgraduation.config.redis;
 
 import org.redisson.api.RBloomFilter;
 import org.redisson.api.RedissonClient;
