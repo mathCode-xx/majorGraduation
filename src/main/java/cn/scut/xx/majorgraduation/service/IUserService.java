@@ -1,6 +1,7 @@
 package cn.scut.xx.majorgraduation.service;
 
 import cn.scut.xx.majorgraduation.pojo.dto.req.UserRoleAddReqDTO;
+import cn.scut.xx.majorgraduation.pojo.dto.req.UserRoleRemoveReqDTO;
 import cn.scut.xx.majorgraduation.pojo.dto.req.UserSaveReqDTO;
 
 /**
@@ -29,4 +30,11 @@ public interface IUserService {
      * @param userRoleAddReqDTO 需要添加的信息
      */
     void addRole(UserRoleAddReqDTO userRoleAddReqDTO);
+
+    /**
+     * 移除用户的角色
+     *
+     * @param userRoleRemoveReqDTO 需要移除的信息
+     */
+    void removeRole(UserRoleRemoveReqDTO userRoleRemoveReqDTO);
 }
