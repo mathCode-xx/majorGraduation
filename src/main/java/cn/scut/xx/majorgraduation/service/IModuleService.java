@@ -23,4 +23,12 @@ public interface IModuleService {
      * @param moduleSaveReqDTO 请求参数
      */
     void save(ModuleSaveReqDTO moduleSaveReqDTO);
+
+    /**
+     * 获取用户所授权的模块
+     *
+     * @param userId 用户id
+     * @return 查询结果
+     */
+    List<ModuleRespDTO> getModuleByUser(Long userId);
 }

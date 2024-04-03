@@ -30,4 +30,9 @@ public class ModuleController {
         moduleService.save(moduleSaveReqDTO);
         return Results.success();
     }
+
+    @GetMapping("user")
+    public Result<List<ModuleRespDTO>> getModuleByUser(@RequestParam("userId") Long userId) {
+        return Results.success(moduleService.getModuleByUser(userId));
+    }
 }
