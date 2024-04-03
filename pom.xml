@@ -20,8 +20,14 @@
         <mybatis.version>3.0.3</mybatis.version>
         <spring-test.version>3.0.3</spring-test.version>
         <mybatis-plus.version>3.5.5</mybatis-plus.version>
+        <mpj.version>1.4.11</mpj.version>
     </properties>
     <dependencies>
+        <dependency>
+            <groupId>com.github.yulichang</groupId>
+            <artifactId>mybatis-plus-join-boot-starter</artifactId>
+            <version>${mpj.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>

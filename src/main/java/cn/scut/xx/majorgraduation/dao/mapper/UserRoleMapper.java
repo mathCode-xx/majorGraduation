@@ -1,10 +1,10 @@
 package cn.scut.xx.majorgraduation.dao.mapper;
 
 import cn.scut.xx.majorgraduation.dao.po.UserRolePO;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.github.yulichang.base.MPJBaseMapper;
 
 /**
  * @author 徐鑫
  */
-public interface UserRoleMapper extends BaseMapper<UserRolePO> {
+public interface UserRoleMapper extends MPJBaseMapper<UserRolePO> {
 }
