@@ -1,6 +1,7 @@
 package cn.scut.xx.majorgraduation.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.scut.xx.majorgraduation.common.database.UserStatusEnum;
 import cn.scut.xx.majorgraduation.core.exception.ClientException;
 import cn.scut.xx.majorgraduation.dao.mapper.RoleMapper;
 import cn.scut.xx.majorgraduation.dao.mapper.UserMapper;
@@ -11,9 +12,12 @@ import cn.scut.xx.majorgraduation.dao.po.UserRolePO;
 import cn.scut.xx.majorgraduation.pojo.dto.req.UserRoleAddReqDTO;
 import cn.scut.xx.majorgraduation.pojo.dto.req.UserRoleRemoveReqDTO;
 import cn.scut.xx.majorgraduation.pojo.dto.req.UserSaveReqDTO;
+import cn.scut.xx.majorgraduation.pojo.dto.req.UserSearchReqDTO;
+import cn.scut.xx.majorgraduation.pojo.dto.resp.UserRespDTO;
 import cn.scut.xx.majorgraduation.redis.constant.RedisConstant;
 import cn.scut.xx.majorgraduation.service.IUserService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.redisson.api.RBloomFilter;
@@ -94,6 +98,49 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserPO> implements 
         int result = userRoleMapper.delete(query);
         if (result < 1) {
             throw new ClientException("该用户不属于该角色！");
+        }
+    }
+
+    @Override
+    public Page<UserRespDTO> searchList(UserSearchReqDTO userSearchReqDTO) {
+        LambdaQueryWrapper<UserPO> query = new LambdaQueryWrapper<>();
+        fillQueryCondition(query, userSearchReqDTO);
+        Page<UserPO> page = new Page<>(userSearchReqDTO.getCurrent(), userSearchReqDTO.getSize());
+        baseMapper.selectPage(page, query);
+        Page<UserRespDTO> result = new Page<>();
+        BeanUtil.copyProperties(page, result);
+        result.setRecords(BeanUtil.copyToList(page.getRecords(), UserRespDTO.class));
+        return result;
+    }
+
+    private void fillQueryCondition(LambdaQueryWrapper<UserPO> query, UserSearchReqDTO userSearchReqDTO) {
+        if(userSearchReqDTO.getUserId() != null) {
+            // 有id就是精确查询
+            query.eq(UserPO::getUserId, userSearchReqDTO.getUserId());
+            return;
+        }
+
+        if (userSearchReqDTO.getUserName() != null) {
+            // 用户名模糊查询
+            query.like(UserPO::getUserName, userSearchReqDTO.getUserName());
+        }
+        if (userSearchReqDTO.getPhoneNumber() != null) {
+            // 手机号模糊查询
+            query.like(UserPO::getPhoneNumber, userSearchReqDTO.getPhoneNumber());
+        }
+        if (userSearchReqDTO.getStatus() != null) {
+            boolean sign = false;
+            UserStatusEnum[] values = UserStatusEnum.values();
+            for (UserStatusEnum value : values) {
+                Integer status = value.getStatus();
+                if (userSearchReqDTO.getStatus().equals(status)) {
+                    query.eq(UserPO::getStatus, status);
+                    sign = true;
+                }
+            }
+            if (!sign) {
+                throw new ClientException("参数出错，请确保用户状态值参数正确！");
+            }
         }
     }
 

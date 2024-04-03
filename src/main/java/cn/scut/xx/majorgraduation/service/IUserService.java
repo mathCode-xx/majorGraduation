@@ -3,6 +3,9 @@ package cn.scut.xx.majorgraduation.service;
 import cn.scut.xx.majorgraduation.pojo.dto.req.UserRoleAddReqDTO;
 import cn.scut.xx.majorgraduation.pojo.dto.req.UserRoleRemoveReqDTO;
 import cn.scut.xx.majorgraduation.pojo.dto.req.UserSaveReqDTO;
+import cn.scut.xx.majorgraduation.pojo.dto.req.UserSearchReqDTO;
+import cn.scut.xx.majorgraduation.pojo.dto.resp.UserRespDTO;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 /**
  * @author 徐鑫
@@ -37,4 +40,11 @@ public interface IUserService {
      * @param userRoleRemoveReqDTO 需要移除的信息
      */
     void removeRole(UserRoleRemoveReqDTO userRoleRemoveReqDTO);
+
+    /**
+     * 查找用户数据
+     * @param userSearchReqDTO 查询条件
+     * @return 分页结果集
+     */
+    Page<UserRespDTO> searchList(UserSearchReqDTO userSearchReqDTO);
 }
