@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 
@@ -15,7 +16,8 @@ import java.time.LocalDateTime;
  */
 @Data
 @TableName("t_user")
-public class UserPO {
+@EqualsAndHashCode(callSuper = true)
+public class UserPO extends BasePO {
 
     /**
      * 主键
@@ -46,12 +48,6 @@ public class UserPO {
      */
     @TableField("login_time")
     private LocalDateTime loginTime;
-
-    /**
-     * 账号创建时间
-     */
-    @TableField("create_time")
-    private LocalDateTime createTime;
 
     /**
      * 最近修改密码时间

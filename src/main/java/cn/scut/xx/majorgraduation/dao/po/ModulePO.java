@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
+import lombok.*;
 
 /**
  * 系统模块管理
@@ -13,7 +13,8 @@ import lombok.Data;
  */
 @TableName("t_module")
 @Data
-public class ModulePO {
+@EqualsAndHashCode(callSuper = true)
+public class ModulePO extends BasePO {
 
     /**
      * 主键

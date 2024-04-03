@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 角色-模块 对应表，角色拥有哪些模块的权限
@@ -13,7 +14,8 @@ import lombok.Data;
  */
 @Data
 @TableName("t_role_module")
-public class RoleModulePO {
+@EqualsAndHashCode(callSuper = true)
+public class RoleModulePO extends BasePO {
 
     /**
      * 主键
@@ -32,11 +34,5 @@ public class RoleModulePO {
      */
     @TableField("module_id")
     private Long moduleId;
-
-    /**
-     * 删除标记，请见系统字典kind=2
-     */
-    @TableField("delete_flag")
-    private Integer deleteFlag;
 
 }

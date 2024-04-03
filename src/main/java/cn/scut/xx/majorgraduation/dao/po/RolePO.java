@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 系统角色
@@ -13,7 +14,8 @@ import lombok.Data;
  */
 @Data
 @TableName("t_role")
-public class RolePO {
+@EqualsAndHashCode(callSuper = true)
+public class RolePO extends BasePO {
 
     /**
      * 主键
