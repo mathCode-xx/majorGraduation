@@ -6,7 +6,7 @@ import cn.scut.xx.majorgraduation.core.exception.ServiceException;
 import cn.scut.xx.majorgraduation.dao.mapper.RoleMapper;
 import cn.scut.xx.majorgraduation.dao.po.RolePO;
 import cn.scut.xx.majorgraduation.pojo.dto.req.RoleSaveReqDTO;
-import cn.scut.xx.majorgraduation.service.RoleService;
+import cn.scut.xx.majorgraduation.service.IRoleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
  * @author 徐鑫
  */
 @Service
-public class RoleServiceImpl extends ServiceImpl<RoleMapper, RolePO> implements RoleService {
+public class RoleServiceImpl extends ServiceImpl<RoleMapper, RolePO> implements IRoleService {
     @Override
     public void save(RoleSaveReqDTO roleSaveReqDTO) {
         RolePO role = BeanUtil.toBean(roleSaveReqDTO, RolePO.class);

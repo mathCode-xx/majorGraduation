@@ -5,7 +5,7 @@ import cn.scut.xx.majorgraduation.pojo.dto.req.RoleSaveReqDTO;
 /**
  * @author 徐鑫
  */
-public interface RoleService {
+public interface IRoleService {
 
     /**
      * 新增角色信息

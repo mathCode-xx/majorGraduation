@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * @author 徐鑫
  */
-public interface ModuleService {
+public interface IModuleService {
 
     /**
      * 获取所有模块信息

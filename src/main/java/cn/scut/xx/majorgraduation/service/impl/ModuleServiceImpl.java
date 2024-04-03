@@ -6,7 +6,7 @@ import cn.scut.xx.majorgraduation.dao.mapper.ModuleMapper;
 import cn.scut.xx.majorgraduation.dao.po.ModulePO;
 import cn.scut.xx.majorgraduation.pojo.dto.req.ModuleSaveReqDTO;
 import cn.scut.xx.majorgraduation.pojo.dto.resp.ModuleRespDTO;
-import cn.scut.xx.majorgraduation.service.ModuleService;
+import cn.scut.xx.majorgraduation.service.IModuleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +20,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ModuleServiceImpl extends ServiceImpl<ModuleMapper, ModulePO> implements ModuleService {
+public class ModuleServiceImpl extends ServiceImpl<ModuleMapper, ModulePO> implements IModuleService {
     @Override
     public List<ModuleRespDTO> getAll() {
         List<ModulePO> list = baseMapper.selectList(null);

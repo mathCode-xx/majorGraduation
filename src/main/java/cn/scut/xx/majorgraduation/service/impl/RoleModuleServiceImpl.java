@@ -9,7 +9,7 @@ import cn.scut.xx.majorgraduation.dao.po.ModulePO;
 import cn.scut.xx.majorgraduation.dao.po.RoleModulePO;
 import cn.scut.xx.majorgraduation.dao.po.RolePO;
 import cn.scut.xx.majorgraduation.pojo.dto.req.RoleModuleSaveReqDTO;
-import cn.scut.xx.majorgraduation.service.RoleModuleService;
+import cn.scut.xx.majorgraduation.service.IRoleModuleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor
-public class RoleModuleServiceImpl extends ServiceImpl<RoleModuleMapper, RoleModulePO> implements RoleModuleService {
+public class RoleModuleServiceImpl extends ServiceImpl<RoleModuleMapper, RoleModulePO> implements IRoleModuleService {
 
     private final RoleMapper roleMapper;
     private final ModuleMapper moduleMapper;
