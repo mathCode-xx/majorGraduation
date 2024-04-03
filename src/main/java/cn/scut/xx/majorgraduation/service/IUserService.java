@@ -1,5 +1,6 @@
 package cn.scut.xx.majorgraduation.service;
 
+import cn.scut.xx.majorgraduation.pojo.dto.req.UserRoleAddReqDTO;
 import cn.scut.xx.majorgraduation.pojo.dto.req.UserSaveReqDTO;
 
 /**
@@ -21,4 +22,11 @@ public interface IUserService {
      * @return 如果不存在返回true
      */
     boolean checkUserNameIfNot(String userName);
+
+    /**
+     * 给某个用户添加角色信息
+     *
+     * @param userRoleAddReqDTO 需要添加的信息
+     */
+    void addRole(UserRoleAddReqDTO userRoleAddReqDTO);
 }
