@@ -30,6 +30,7 @@ public class TokenServiceImpl implements ITokenService {
     public UserPO getUserInfoFromToken(String token) {
         String tokenKey = parseRedisKeyFromToken(token);
         String userInfoStr = stringRedisTemplate.opsForValue().get(tokenKey);
+        flushTokenKey(tokenKey);
         return JSONUtil.toBean(userInfoStr, UserPO.class);
     }
 
@@ -39,6 +40,7 @@ public class TokenServiceImpl implements ITokenService {
         String token = JWT.create()
                 .setPayload(CLAIMS_KEY, tokenKey)
                 .setKey(secret.getBytes(StandardCharsets.UTF_8)).sign();
+        stringRedisTemplate.opsForValue().set(tokenKey, JSONUtil.toJsonStr(user));
         flushTokenKey(tokenKey);
         return token;
     }
