@@ -2,6 +2,8 @@ package cn.scut.xx.majorgraduation.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.scut.xx.majorgraduation.common.database.UserStatusEnum;
+import cn.scut.xx.majorgraduation.common.redis.constant.RedisConstant;
+import cn.scut.xx.majorgraduation.common.utils.MD5Utils;
 import cn.scut.xx.majorgraduation.core.exception.ClientException;
 import cn.scut.xx.majorgraduation.dao.mapper.RoleMapper;
 import cn.scut.xx.majorgraduation.dao.mapper.UserMapper;
@@ -9,12 +11,9 @@ import cn.scut.xx.majorgraduation.dao.mapper.UserRoleMapper;
 import cn.scut.xx.majorgraduation.dao.po.RolePO;
 import cn.scut.xx.majorgraduation.dao.po.UserPO;
 import cn.scut.xx.majorgraduation.dao.po.UserRolePO;
-import cn.scut.xx.majorgraduation.pojo.dto.req.UserRoleAddReqDTO;
-import cn.scut.xx.majorgraduation.pojo.dto.req.UserRoleRemoveReqDTO;
-import cn.scut.xx.majorgraduation.pojo.dto.req.UserSaveReqDTO;
-import cn.scut.xx.majorgraduation.pojo.dto.req.UserSearchReqDTO;
+import cn.scut.xx.majorgraduation.pojo.dto.req.*;
 import cn.scut.xx.majorgraduation.pojo.dto.resp.UserRespDTO;
-import cn.scut.xx.majorgraduation.common.redis.constant.RedisConstant;
+import cn.scut.xx.majorgraduation.service.ITokenService;
 import cn.scut.xx.majorgraduation.service.IUserService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -40,6 +39,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserPO> implements 
     private final RedissonClient redissonClient;
     private final UserRoleMapper userRoleMapper;
     private final RoleMapper roleMapper;
+    private final ITokenService tokenService;
 
     @Override
     public void save(UserSaveReqDTO userSaveReqDTO) {
@@ -51,6 +51,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserPO> implements 
             if (lock.tryLock()) {
                 UserPO user = BeanUtil.toBean(userSaveReqDTO, UserPO.class);
                 user.setUpdatePasswordTime(LocalDateTime.now());
+                user.setPassword(MD5Utils.encrypt(user.getPassword()));
                 try {
                     baseMapper.insert(user);
                 } catch (DuplicateKeyException ex) {
@@ -113,8 +114,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserPO> implements 
         return result;
     }
 
+    @Override
+    public String login(UserLoginReqDTO userLoginReqDTO) {
+        String md5 = MD5Utils.encrypt(userLoginReqDTO.getPassword());
+        LambdaQueryWrapper<UserPO> query = new LambdaQueryWrapper<>();
+        query.eq(UserPO::getPhoneNumber, userLoginReqDTO.getPhoneNumber())
+                .eq(UserPO::getPassword, md5);
+        UserPO user = baseMapper.selectOne(query);
+        if (user == null) {
+            throw new ClientException("用户名或密码错误");
+        }
+
+        return tokenService.generateTokenByUser(user);
+    }
+
     private void fillQueryCondition(LambdaQueryWrapper<UserPO> query, UserSearchReqDTO userSearchReqDTO) {
-        if(userSearchReqDTO.getUserId() != null) {
+        if (userSearchReqDTO.getUserId() != null) {
             // 有id就是精确查询
             query.eq(UserPO::getUserId, userSearchReqDTO.getUserId());
             return;

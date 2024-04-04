@@ -1,9 +1,6 @@
 package cn.scut.xx.majorgraduation.service;
 
-import cn.scut.xx.majorgraduation.pojo.dto.req.UserRoleAddReqDTO;
-import cn.scut.xx.majorgraduation.pojo.dto.req.UserRoleRemoveReqDTO;
-import cn.scut.xx.majorgraduation.pojo.dto.req.UserSaveReqDTO;
-import cn.scut.xx.majorgraduation.pojo.dto.req.UserSearchReqDTO;
+import cn.scut.xx.majorgraduation.pojo.dto.req.*;
 import cn.scut.xx.majorgraduation.pojo.dto.resp.UserRespDTO;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
@@ -43,8 +40,17 @@ public interface IUserService {
 
     /**
      * 查找用户数据
+     *
      * @param userSearchReqDTO 查询条件
      * @return 分页结果集
      */
     Page<UserRespDTO> searchList(UserSearchReqDTO userSearchReqDTO);
+
+    /**
+     * 用户登录
+     *
+     * @param userLoginReqDTO 登录参数
+     * @return token
+     */
+    String login(UserLoginReqDTO userLoginReqDTO);
 }

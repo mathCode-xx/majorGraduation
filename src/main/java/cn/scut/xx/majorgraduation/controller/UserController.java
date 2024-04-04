@@ -2,10 +2,7 @@ package cn.scut.xx.majorgraduation.controller;
 
 import cn.scut.xx.majorgraduation.core.result.Result;
 import cn.scut.xx.majorgraduation.core.result.Results;
-import cn.scut.xx.majorgraduation.pojo.dto.req.UserRoleAddReqDTO;
-import cn.scut.xx.majorgraduation.pojo.dto.req.UserRoleRemoveReqDTO;
-import cn.scut.xx.majorgraduation.pojo.dto.req.UserSaveReqDTO;
-import cn.scut.xx.majorgraduation.pojo.dto.req.UserSearchReqDTO;
+import cn.scut.xx.majorgraduation.pojo.dto.req.*;
 import cn.scut.xx.majorgraduation.pojo.dto.resp.UserRespDTO;
 import cn.scut.xx.majorgraduation.service.IUserService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -21,6 +18,11 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final IUserService userService;
+
+    @PostMapping("login")
+    public Result<String> login(@RequestBody UserLoginReqDTO request) {
+        return Results.success(userService.login(request));
+    }
 
     @PostMapping
     public Result<Void> save(@RequestBody UserSaveReqDTO request) {
