@@ -1,10 +1,11 @@
 package cn.scut.xx.majorgraduation.service.impl;
 
 import cn.hutool.core.lang.UUID;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import cn.hutool.jwt.JWT;
-import cn.scut.xx.majorgraduation.common.redis.constant.RedisConstant;
 import cn.scut.xx.majorgraduation.common.redis.utils.RedisUtils;
+import cn.scut.xx.majorgraduation.core.exception.ClientException;
 import cn.scut.xx.majorgraduation.dao.po.UserPO;
 import cn.scut.xx.majorgraduation.service.ITokenService;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,9 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+
+import static cn.scut.xx.majorgraduation.core.errorcode.BaseErrorCode.TOKEN_DELETED_ERROR;
 
 /**
  * @author 徐鑫
@@ -20,7 +24,6 @@ import java.nio.charset.StandardCharsets;
 @Service
 @RequiredArgsConstructor
 public class TokenServiceImpl implements ITokenService {
-    private final String REDIS_SAVE_TOKEN_KEY = RedisConstant.TOKEN_USER_INFO;
     private final String CLAIMS_KEY = "token";
     private final StringRedisTemplate stringRedisTemplate;
     @Value("${jwt.secret}")
@@ -36,12 +39,15 @@ public class TokenServiceImpl implements ITokenService {
 
     @Override
     public String generateTokenByUser(UserPO user) {
-        String tokenKey = REDIS_SAVE_TOKEN_KEY + UUID.fastUUID();
+        String tokenKey = getRedisKeyByTokenKey(UUID.randomUUID().toString());
         String token = JWT.create()
                 .setPayload(CLAIMS_KEY, tokenKey)
                 .setKey(secret.getBytes(StandardCharsets.UTF_8)).sign();
-        stringRedisTemplate.opsForValue().set(tokenKey, JSONUtil.toJsonStr(user));
-        flushTokenKey(tokenKey);
+
+        // 将用户信息与token存入redis
+        Duration duration = RedisUtils.getRandomTime();
+        stringRedisTemplate.opsForValue().set(tokenKey, JSONUtil.toJsonStr(user), duration);
+        stringRedisTemplate.opsForValue().set(getRedisKeyByUserId(user.getUserId()), token, duration);
         return token;
     }
 
@@ -52,11 +58,26 @@ public class TokenServiceImpl implements ITokenService {
     }
 
     private void flushTokenKey(String tokenKey) {
-        if (tokenKey.startsWith(REDIS_SAVE_TOKEN_KEY)) {
-            stringRedisTemplate.expire(tokenKey, RedisUtils.getRandomTime());
-        } else {
-            stringRedisTemplate.expire(REDIS_SAVE_TOKEN_KEY + tokenKey, RedisUtils.getRandomTime());
+        flushTokenKey(tokenKey, RedisUtils.getRandomTime());
+    }
+
+    private void flushTokenKey(String tokenKey, Duration timeout) {
+        tokenKey = getRedisKeyByTokenKey(tokenKey);
+        String userJson = stringRedisTemplate.opsForValue().get(tokenKey);
+        if (StrUtil.isEmpty(userJson)) {
+            throw new ClientException(TOKEN_DELETED_ERROR);
         }
+        UserPO user = JSONUtil.toBean(userJson, UserPO.class);
+        stringRedisTemplate.expire(tokenKey, timeout);
+        stringRedisTemplate.expire(getRedisKeyByUserId(user.getUserId()), timeout);
+    }
+
+    private String getRedisKeyByUserId(Long userId) {
+        return RedisUtils.getCacheTokenKey(userId);
+    }
+
+    private String getRedisKeyByTokenKey(String tokenKey) {
+        return RedisUtils.getCacheUserInfoByTokenKey(tokenKey);
     }
 
     private String parseRedisKeyFromToken(String token) {

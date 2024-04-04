@@ -29,4 +29,5 @@ public class RedisConstant {
      */
     private final static String TOKEN_PRI = "token:";
     public final static String TOKEN_USER_INFO = TOKEN_PRI + "user:";
+    public final static String TOKEN_INFO = TOKEN_PRI;
 }

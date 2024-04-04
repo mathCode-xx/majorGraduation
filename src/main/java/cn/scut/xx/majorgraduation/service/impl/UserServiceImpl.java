@@ -1,8 +1,10 @@
 package cn.scut.xx.majorgraduation.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.scut.xx.majorgraduation.common.database.UserStatusEnum;
 import cn.scut.xx.majorgraduation.common.redis.constant.RedisConstant;
+import cn.scut.xx.majorgraduation.common.redis.utils.RedisUtils;
 import cn.scut.xx.majorgraduation.common.utils.MD5Utils;
 import cn.scut.xx.majorgraduation.core.exception.ClientException;
 import cn.scut.xx.majorgraduation.dao.mapper.RoleMapper;
@@ -23,6 +25,7 @@ import org.redisson.api.RBloomFilter;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -40,6 +43,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserPO> implements 
     private final UserRoleMapper userRoleMapper;
     private final RoleMapper roleMapper;
     private final ITokenService tokenService;
+    private final StringRedisTemplate stringRedisTemplate;
 
     @Override
     public void save(UserSaveReqDTO userSaveReqDTO) {
@@ -124,8 +128,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserPO> implements 
         if (user == null) {
             throw new ClientException("用户名或密码错误");
         }
-
-        return tokenService.generateTokenByUser(user);
+        String token = stringRedisTemplate.opsForValue()
+                .get(RedisUtils.getCacheTokenKey(user.getUserId()));
+        if (StrUtil.isEmpty(token)) {
+            token = tokenService.generateTokenByUser(user);
+        }
+        return token;
     }
 
     @Override
