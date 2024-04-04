@@ -19,6 +19,11 @@ public class UserController {
 
     private final IUserService userService;
 
+    @GetMapping("current")
+    public Result<UserRespDTO> getCurrentUserInfo(@RequestHeader("token") String token) {
+        return Results.success(userService.getUserInfoFromToken(token));
+    }
+
     @PostMapping("login")
     public Result<String> login(@RequestBody UserLoginReqDTO request) {
         return Results.success(userService.login(request));

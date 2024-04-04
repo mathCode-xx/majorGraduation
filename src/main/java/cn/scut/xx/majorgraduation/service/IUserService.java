@@ -53,4 +53,12 @@ public interface IUserService {
      * @return token
      */
     String login(UserLoginReqDTO userLoginReqDTO);
+
+    /**
+     * 从token中获取用户信息
+     *
+     * @param token token
+     * @return user info
+     */
+    UserRespDTO getUserInfoFromToken(String token);
 }

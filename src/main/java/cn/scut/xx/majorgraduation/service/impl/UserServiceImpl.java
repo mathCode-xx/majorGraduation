@@ -128,6 +128,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserPO> implements 
         return tokenService.generateTokenByUser(user);
     }
 
+    @Override
+    public UserRespDTO getUserInfoFromToken(String token) {
+        UserPO user = tokenService.getUserInfoFromToken(token);
+        return BeanUtil.toBean(user, UserRespDTO.class);
+    }
+
     private void fillQueryCondition(LambdaQueryWrapper<UserPO> query, UserSearchReqDTO userSearchReqDTO) {
         if (userSearchReqDTO.getUserId() != null) {
             // 有id就是精确查询
