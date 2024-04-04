@@ -24,4 +24,9 @@ public class RedisConstant {
      */
     public static Integer MAX_SIZE = Integer.MAX_VALUE;
 
+    /**
+     * token
+     */
+    private final static String TOKEN_PRI = "token:";
+    public final static String TOKEN_USER_INFO = TOKEN_PRI + "user:";
 }
