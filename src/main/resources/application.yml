@@ -1,3 +1,4 @@
+
 spring:
   application:
     name: MajorGraduation
@@ -33,3 +34,5 @@ mybatis-plus:
 
 jwt:
   secret: 123456
+server:
+  port: 8081
