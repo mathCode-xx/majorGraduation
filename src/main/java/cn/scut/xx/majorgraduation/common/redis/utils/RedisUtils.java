@@ -14,7 +14,7 @@ public class RedisUtils {
      * 获取一个随机秒数
      */
     public static Duration getRandomTime() {
-        int time = RandomUtil.randomInt(1000);
+        int time = RandomUtil.randomInt(1000) + 500;
         return Duration.ofSeconds(time);
     }
 
