@@ -31,6 +31,9 @@ public class TokenServiceImpl implements ITokenService {
 
     @Override
     public UserPO getUserInfoFromToken(String token) {
+        if (StrUtil.isEmpty(token)) {
+            throw new ClientException(TOKEN_DELETED_ERROR);
+        }
         String tokenKey = parseRedisKeyFromToken(token);
         String userInfoStr = stringRedisTemplate.opsForValue().get(tokenKey);
         flushTokenKey(tokenKey);

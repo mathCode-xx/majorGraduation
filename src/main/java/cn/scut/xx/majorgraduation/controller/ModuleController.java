@@ -40,7 +40,8 @@ public class ModuleController {
     }
 
     @GetMapping("user/current")
-    public Result<List<ModuleRespDTO>> getModuleFromCurrentUser(@RequestHeader("token") String token) {
+    public Result<List<ModuleRespDTO>> getModuleFromCurrentUser(
+            @RequestHeader(value = "token",required = false) String token) {
         UserPO user = tokenService.getUserInfoFromToken(token);
         return Results.success(moduleService.getModuleByUser(user.getUserId()));
     }
