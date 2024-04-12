@@ -65,8 +65,6 @@ public class ModuleServiceImpl extends ServiceImpl<ModuleMapper, ModulePO> imple
                 .eq(UserPO::getUserId, userId);
         List<ModuleRespDTO> result = baseMapper.selectJoinList(ModuleRespDTO.class, query);
         if (CollectionUtil.isEmpty(result)) {
-            stringRedisTemplate.opsForValue().set(key, "");
-            stringRedisTemplate.expire(key, RedisUtils.getRandomTime());
             return result;
         }
         stringRedisTemplate.opsForList().rightPushAll(key, result.stream().map(JSONUtil::toJsonStr).toList());
