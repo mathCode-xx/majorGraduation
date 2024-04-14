@@ -13,12 +13,15 @@ import cn.scut.xx.majorgraduation.dao.po.RolePO;
 import cn.scut.xx.majorgraduation.pojo.dto.req.RoleModuleRemoveReqDTO;
 import cn.scut.xx.majorgraduation.pojo.dto.req.RoleModuleSaveReqDTO;
 import cn.scut.xx.majorgraduation.pojo.dto.req.RoleSaveReqDTO;
+import cn.scut.xx.majorgraduation.pojo.dto.resp.RoleRespDTO;
 import cn.scut.xx.majorgraduation.service.IRoleService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @author 徐鑫
@@ -29,6 +32,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, RolePO> implements 
     private final RoleMapper roleMapper;
     private final ModuleMapper moduleMapper;
     private final RoleModuleMapper roleModuleMapper;
+
     @Override
     public void save(RoleSaveReqDTO roleSaveReqDTO) {
         RolePO role = BeanUtil.toBean(roleSaveReqDTO, RolePO.class);
@@ -71,20 +75,29 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, RolePO> implements 
                     .eq(RoleModulePO::getModuleId, moduleId);
         }
         int result = roleModuleMapper.delete(query);
-        if(result < 1) {
+        if (result < 1) {
             throw new ClientException("该角色并未授权该模块，无需删除！");
         }
     }
 
+    @Override
+    public List<RoleRespDTO> getAll() {
+        LambdaQueryWrapper<RolePO> query = new LambdaQueryWrapper<RolePO>()
+                .eq(RolePO::getStatus, 0);
+        List<RolePO> roles = baseMapper.selectList(query);
+        return BeanUtil.copyToList(roles, RoleRespDTO.class);
+    }
+
     private void checkRoleThrow(Long roleId) {
         RolePO role = roleMapper.selectById(roleId);
-        if(role == null) {
+        if (role == null) {
             throw new ServiceException("角色或模块不存在！");
         }
     }
+
     private void checkModuleThrow(Long moduleId) {
         ModulePO module = moduleMapper.selectById(moduleId);
-        if(module == null) {
+        if (module == null) {
             throw new ServiceException("角色或模块不存在！");
         }
     }

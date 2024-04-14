@@ -3,6 +3,9 @@ package cn.scut.xx.majorgraduation.service;
 import cn.scut.xx.majorgraduation.pojo.dto.req.RoleModuleRemoveReqDTO;
 import cn.scut.xx.majorgraduation.pojo.dto.req.RoleModuleSaveReqDTO;
 import cn.scut.xx.majorgraduation.pojo.dto.req.RoleSaveReqDTO;
+import cn.scut.xx.majorgraduation.pojo.dto.resp.RoleRespDTO;
+
+import java.util.List;
 
 /**
  * @author 徐鑫
@@ -29,4 +32,12 @@ public interface IRoleService {
      * @param roleModuleRemoveReqDTO 请求参数
      */
     void removeModule(RoleModuleRemoveReqDTO roleModuleRemoveReqDTO);
+
+    /**
+     * 获取所有角色信息
+     *
+     * @return 数据
+     */
+    List<RoleRespDTO> getAll();
+
 }
