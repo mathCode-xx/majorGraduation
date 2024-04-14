@@ -21,7 +21,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 // 允许的源
-                .allowedOrigins("http://192.168.231.79:8080")
+                .allowedOrigins("http://localhost:8080")
                 // 允许的HTTP方法
                 .allowedMethods("GET", "POST")
                 // 允许的请求头
