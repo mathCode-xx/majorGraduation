@@ -1,6 +1,7 @@
 package cn.scut.xx.majorgraduation.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.scut.xx.majorgraduation.common.redis.constant.RedisConstant;
 import cn.scut.xx.majorgraduation.core.exception.ClientException;
 import cn.scut.xx.majorgraduation.core.exception.ExceptionUtil;
 import cn.scut.xx.majorgraduation.core.exception.ServiceException;
@@ -10,6 +11,7 @@ import cn.scut.xx.majorgraduation.dao.mapper.RoleModuleMapper;
 import cn.scut.xx.majorgraduation.dao.po.ModulePO;
 import cn.scut.xx.majorgraduation.dao.po.RoleModulePO;
 import cn.scut.xx.majorgraduation.dao.po.RolePO;
+import cn.scut.xx.majorgraduation.pojo.dto.req.BatchAddRoleModuleReqDTO;
 import cn.scut.xx.majorgraduation.pojo.dto.req.RoleModuleRemoveReqDTO;
 import cn.scut.xx.majorgraduation.pojo.dto.req.RoleModuleSaveReqDTO;
 import cn.scut.xx.majorgraduation.pojo.dto.req.RoleSaveReqDTO;
@@ -19,8 +21,10 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,6 +36,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, RolePO> implements 
     private final RoleMapper roleMapper;
     private final ModuleMapper moduleMapper;
     private final RoleModuleMapper roleModuleMapper;
+    private final StringRedisTemplate stringRedisTemplate;
 
     @Override
     public void save(RoleSaveReqDTO roleSaveReqDTO) {
@@ -86,6 +91,23 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, RolePO> implements 
                 .eq(RolePO::getStatus, 0);
         List<RolePO> roles = baseMapper.selectList(query);
         return BeanUtil.copyToList(roles, RoleRespDTO.class);
+    }
+
+    @Override
+    public void batchAddModule(BatchAddRoleModuleReqDTO request) {
+        List<RoleModulePO> toSaveData = new ArrayList<>();
+        for (Long roleId :
+                request.getRoleIds()) {
+            stringRedisTemplate.delete(RedisConstant.CACHE_ROLE_MODULE + roleId);
+            for (Long moduleId :
+                    request.getModuleIds()) {
+                RoleModulePO po = new RoleModulePO();
+                po.setModuleId(moduleId);
+                po.setRoleId(roleId);
+                toSaveData.add(po);
+            }
+        }
+        toSaveData.forEach(roleModuleMapper::insert);
     }
 
     private void checkRoleThrow(Long roleId) {

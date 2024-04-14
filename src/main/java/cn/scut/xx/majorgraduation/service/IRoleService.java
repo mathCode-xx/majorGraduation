@@ -1,5 +1,6 @@
 package cn.scut.xx.majorgraduation.service;
 
+import cn.scut.xx.majorgraduation.pojo.dto.req.BatchAddRoleModuleReqDTO;
 import cn.scut.xx.majorgraduation.pojo.dto.req.RoleModuleRemoveReqDTO;
 import cn.scut.xx.majorgraduation.pojo.dto.req.RoleModuleSaveReqDTO;
 import cn.scut.xx.majorgraduation.pojo.dto.req.RoleSaveReqDTO;
@@ -40,4 +41,11 @@ public interface IRoleService {
      */
     List<RoleRespDTO> getAll();
 
+    /**
+     * 批量为角色授予模块权限
+     *
+     * @param request 请求参数
+     * @return
+     */
+    void batchAddModule(BatchAddRoleModuleReqDTO request);
 }

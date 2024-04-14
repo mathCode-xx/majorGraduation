@@ -2,6 +2,7 @@ package cn.scut.xx.majorgraduation.controller;
 
 import cn.scut.xx.majorgraduation.core.result.Result;
 import cn.scut.xx.majorgraduation.core.result.Results;
+import cn.scut.xx.majorgraduation.pojo.dto.req.BatchAddRoleModuleReqDTO;
 import cn.scut.xx.majorgraduation.pojo.dto.req.RoleModuleRemoveReqDTO;
 import cn.scut.xx.majorgraduation.pojo.dto.req.RoleModuleSaveReqDTO;
 import cn.scut.xx.majorgraduation.pojo.dto.req.RoleSaveReqDTO;
@@ -41,6 +42,12 @@ public class RoleController {
     @DeleteMapping("module")
     public Result<Void> removeModule(@RequestBody RoleModuleRemoveReqDTO request) {
         roleService.removeModule(request);
+        return Results.success();
+    }
+
+    @PostMapping("module/batch")
+    public Result<Void> batchAddModule(@RequestBody BatchAddRoleModuleReqDTO request) {
+        roleService.batchAddModule(request);
         return Results.success();
     }
 }
