@@ -18,6 +18,9 @@ public class RedisConstant {
      */
     private static final String CACHE_PRI = "cache:";
     public static final String CACHE_USER_MODULE = CACHE_PRI + "user:";
+    public static final String CACHE_MODULE = CACHE_PRI + "module:";
+    public static final String CACHE_ROLE = CACHE_PRI + "role:";
+    public static final String CACHE_ROLE_MODULE = CACHE_ROLE + "module:";
 
     /**
      * 缓存大小
