@@ -31,4 +31,12 @@ public interface IModuleService {
      * @return 查询结果
      */
     List<ModuleRespDTO> getModuleByUser(Long userId);
+
+    /**
+     * 获取某角色所拥有的模块权限
+     *
+     * @param roleId 角色id
+     * @return 数据
+     */
+    List<ModuleRespDTO> getByRole(Long roleId);
 }

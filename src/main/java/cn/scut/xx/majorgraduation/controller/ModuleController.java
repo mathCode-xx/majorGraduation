@@ -28,6 +28,12 @@ public class ModuleController {
         return Results.success(moduleService.getAll());
     }
 
+    @GetMapping("role")
+    public Result<List<ModuleRespDTO>> getByRole(@RequestParam("roleId") Long roleId) {
+        List<ModuleRespDTO> data = moduleService.getByRole(roleId);
+        return Results.success(data);
+    }
+
     @PostMapping()
     public Result<Void> save(@RequestBody ModuleSaveReqDTO moduleSaveReqDTO) {
         moduleService.save(moduleSaveReqDTO);
