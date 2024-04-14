@@ -26,6 +26,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author 徐鑫
@@ -95,12 +97,23 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, RolePO> implements 
 
     @Override
     public void batchAddModule(BatchAddRoleModuleReqDTO request) {
+
+        LambdaQueryWrapper<RolePO> roleQuery = new LambdaQueryWrapper<RolePO>()
+                .in(RolePO::getRoleId, request.getRoleIds())
+                .select(RolePO::getRoleId);
+        List<Long> roleIds = getIds(roleMapper.selectMaps(roleQuery));
+
+        LambdaQueryWrapper<ModulePO> moduleQuery = new LambdaQueryWrapper<ModulePO>()
+                .in(ModulePO::getModuleId, request.getModuleIds())
+                .select(ModulePO::getModuleId);
+        List<Long> moduleIds = getIds(moduleMapper.selectMaps(moduleQuery));
+
         List<RoleModulePO> toSaveData = new ArrayList<>();
         for (Long roleId :
-                request.getRoleIds()) {
+                roleIds) {
             stringRedisTemplate.delete(RedisConstant.CACHE_ROLE_MODULE + roleId);
             for (Long moduleId :
-                    request.getModuleIds()) {
+                    moduleIds) {
                 RoleModulePO po = new RoleModulePO();
                 po.setModuleId(moduleId);
                 po.setRoleId(roleId);
@@ -108,6 +121,17 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, RolePO> implements 
             }
         }
         toSaveData.forEach(roleModuleMapper::insert);
+    }
+
+    private List<Long> getIds(List<Map<String, Object>> maps) {
+        return maps.stream().map(map -> {
+            Set<String> keySet = map.keySet();
+            for (String key :
+                    keySet) {
+                return Long.parseLong(map.get(key).toString());
+            }
+            return 0L;
+        }).toList();
     }
 
     private void checkRoleThrow(Long roleId) {
