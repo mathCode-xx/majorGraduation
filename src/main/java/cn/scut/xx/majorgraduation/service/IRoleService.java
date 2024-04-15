@@ -1,9 +1,6 @@
 package cn.scut.xx.majorgraduation.service;
 
-import cn.scut.xx.majorgraduation.pojo.dto.req.BatchAddRoleModuleReqDTO;
-import cn.scut.xx.majorgraduation.pojo.dto.req.RoleModuleRemoveReqDTO;
-import cn.scut.xx.majorgraduation.pojo.dto.req.RoleModuleSaveReqDTO;
-import cn.scut.xx.majorgraduation.pojo.dto.req.RoleSaveReqDTO;
+import cn.scut.xx.majorgraduation.pojo.dto.req.*;
 import cn.scut.xx.majorgraduation.pojo.dto.resp.RoleRespDTO;
 
 import java.util.List;
@@ -54,4 +51,10 @@ public interface IRoleService {
      * @param roleId 角色id
      */
     void delete(Long roleId);
+
+    /**
+     * 修改角色信息
+     * @param roleUpdateReqDTO 请求参数
+     */
+    void update(RoleUpdateReqDTO roleUpdateReqDTO);
 }

@@ -14,10 +14,7 @@ import cn.scut.xx.majorgraduation.dao.po.ModulePO;
 import cn.scut.xx.majorgraduation.dao.po.RoleModulePO;
 import cn.scut.xx.majorgraduation.dao.po.RolePO;
 import cn.scut.xx.majorgraduation.dao.po.UserRolePO;
-import cn.scut.xx.majorgraduation.pojo.dto.req.BatchAddRoleModuleReqDTO;
-import cn.scut.xx.majorgraduation.pojo.dto.req.RoleModuleRemoveReqDTO;
-import cn.scut.xx.majorgraduation.pojo.dto.req.RoleModuleSaveReqDTO;
-import cn.scut.xx.majorgraduation.pojo.dto.req.RoleSaveReqDTO;
+import cn.scut.xx.majorgraduation.pojo.dto.req.*;
 import cn.scut.xx.majorgraduation.pojo.dto.resp.RoleRespDTO;
 import cn.scut.xx.majorgraduation.service.IRoleService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -157,6 +154,20 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, RolePO> implements 
         userRoleQuery.eq(UserRolePO::getRoleId, roleId);
         userRoleMapper.delete(userRoleQuery);
 
+        deleteRoleCache(roleId);
+    }
+
+    @Override
+    public void update(RoleUpdateReqDTO roleUpdateReqDTO) {
+        RolePO toUpdate = BeanUtil.toBean(roleUpdateReqDTO, RolePO.class);
+        int i = baseMapper.updateById(toUpdate);
+        if (i <= 0) {
+            throw new ClientException("数据异常，该角色本不存在，无法修改！");
+        }
+        deleteRoleCache(roleUpdateReqDTO.getRoleId());
+    }
+
+    private void deleteRoleCache(Long roleId) {
         // 删缓存
         List<String> needToDelKeys = new ArrayList<>();
         // 角色信息缓存

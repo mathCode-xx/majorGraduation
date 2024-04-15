@@ -2,10 +2,7 @@ package cn.scut.xx.majorgraduation.controller;
 
 import cn.scut.xx.majorgraduation.core.result.Result;
 import cn.scut.xx.majorgraduation.core.result.Results;
-import cn.scut.xx.majorgraduation.pojo.dto.req.BatchAddRoleModuleReqDTO;
-import cn.scut.xx.majorgraduation.pojo.dto.req.RoleModuleRemoveReqDTO;
-import cn.scut.xx.majorgraduation.pojo.dto.req.RoleModuleSaveReqDTO;
-import cn.scut.xx.majorgraduation.pojo.dto.req.RoleSaveReqDTO;
+import cn.scut.xx.majorgraduation.pojo.dto.req.*;
 import cn.scut.xx.majorgraduation.pojo.dto.resp.RoleRespDTO;
 import cn.scut.xx.majorgraduation.service.IRoleService;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +27,12 @@ public class RoleController {
     @DeleteMapping
     public Result<Void> delete(@RequestParam("roleId") Long roleId) {
         roleService.delete(roleId);
+        return Results.success();
+    }
+
+    @PutMapping
+    public Result<Void> update(@RequestBody RoleUpdateReqDTO request) {
+        roleService.update(request);
         return Results.success();
     }
 
