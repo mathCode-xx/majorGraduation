@@ -23,7 +23,7 @@ public class WebConfig implements WebMvcConfigurer {
                 // 允许的源
                 .allowedOrigins("http://localhost:8080")
                 // 允许的HTTP方法
-                .allowedMethods("GET", "POST")
+                .allowedMethods("*")
                 // 允许的请求头
                 .allowedHeaders("*")
                 // 允许暴露的响应头
