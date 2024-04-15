@@ -1,6 +1,7 @@
 package cn.scut.xx.majorgraduation.service;
 
 import cn.scut.xx.majorgraduation.pojo.dto.req.ModuleSaveReqDTO;
+import cn.scut.xx.majorgraduation.pojo.dto.req.ModuleSearchReqDTO;
 import cn.scut.xx.majorgraduation.pojo.dto.resp.ModuleRespDTO;
 
 import java.util.List;
@@ -13,9 +14,10 @@ public interface IModuleService {
     /**
      * 获取所有模块信息
      *
+     * @param request 查询参数
      * @return 查询到的数据
      */
-    List<ModuleRespDTO> getAll();
+    List<ModuleRespDTO> get(ModuleSearchReqDTO request);
 
     /**
      * 新增模块

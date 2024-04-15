@@ -4,6 +4,7 @@ import cn.scut.xx.majorgraduation.core.result.Result;
 import cn.scut.xx.majorgraduation.core.result.Results;
 import cn.scut.xx.majorgraduation.dao.po.UserPO;
 import cn.scut.xx.majorgraduation.pojo.dto.req.ModuleSaveReqDTO;
+import cn.scut.xx.majorgraduation.pojo.dto.req.ModuleSearchReqDTO;
 import cn.scut.xx.majorgraduation.pojo.dto.resp.ModuleRespDTO;
 import cn.scut.xx.majorgraduation.service.IModuleService;
 import cn.scut.xx.majorgraduation.service.ITokenService;
@@ -23,9 +24,9 @@ public class ModuleController {
     private final IModuleService moduleService;
     private final ITokenService tokenService;
 
-    @GetMapping("all")
-    public Result<List<ModuleRespDTO>> getAll() {
-        return Results.success(moduleService.getAll());
+    @GetMapping("")
+    public Result<List<ModuleRespDTO>> get(ModuleSearchReqDTO request) {
+        return Results.success(moduleService.get(request));
     }
 
     @GetMapping("role")

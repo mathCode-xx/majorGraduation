@@ -10,6 +10,7 @@ import cn.scut.xx.majorgraduation.dao.mapper.ModuleMapper;
 import cn.scut.xx.majorgraduation.dao.mapper.RoleModuleMapper;
 import cn.scut.xx.majorgraduation.dao.po.*;
 import cn.scut.xx.majorgraduation.pojo.dto.req.ModuleSaveReqDTO;
+import cn.scut.xx.majorgraduation.pojo.dto.req.ModuleSearchReqDTO;
 import cn.scut.xx.majorgraduation.pojo.dto.resp.ModuleRespDTO;
 import cn.scut.xx.majorgraduation.service.IModuleService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -36,8 +37,12 @@ public class ModuleServiceImpl extends ServiceImpl<ModuleMapper, ModulePO> imple
     private final RoleModuleMapper roleModuleMapper;
 
     @Override
-    public List<ModuleRespDTO> getAll() {
-        List<ModulePO> list = baseMapper.selectList(null);
+    public List<ModuleRespDTO> get(ModuleSearchReqDTO request) {
+        LambdaQueryWrapper<ModulePO> query = new LambdaQueryWrapper<>();
+        if (request.getUpperModuleId() != null) {
+            query.eq(ModulePO::getUpperModuleId, request.getUpperModuleId());
+        }
+        List<ModulePO> list = baseMapper.selectList(query);
         return BeanUtil.copyToList(list, ModuleRespDTO.class);
     }
 
