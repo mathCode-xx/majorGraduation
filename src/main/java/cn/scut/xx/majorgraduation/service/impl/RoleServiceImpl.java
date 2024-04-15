@@ -91,8 +91,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, RolePO> implements 
 
     @Override
     public List<RoleRespDTO> getAll() {
-        LambdaQueryWrapper<RolePO> query = new LambdaQueryWrapper<RolePO>()
-                .eq(RolePO::getStatus, 0);
+        LambdaQueryWrapper<RolePO> query = new LambdaQueryWrapper<>();
         List<RolePO> roles = baseMapper.selectList(query);
         return BeanUtil.copyToList(roles, RoleRespDTO.class);
     }
