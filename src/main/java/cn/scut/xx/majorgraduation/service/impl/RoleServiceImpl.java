@@ -1,6 +1,7 @@
 package cn.scut.xx.majorgraduation.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.scut.xx.majorgraduation.common.redis.constant.RedisConstant;
 import cn.scut.xx.majorgraduation.core.exception.ClientException;
 import cn.scut.xx.majorgraduation.core.exception.ExceptionUtil;
@@ -109,17 +110,26 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, RolePO> implements 
         List<Long> moduleIds = getIds(moduleMapper.selectMaps(moduleQuery));
 
         List<RoleModulePO> toSaveData = new ArrayList<>();
-        for (Long roleId :
-                roleIds) {
+        List<String> needToDelUserKeys = new ArrayList<>();
+        for (Long roleId : roleIds) {
             stringRedisTemplate.delete(RedisConstant.CACHE_ROLE_MODULE + roleId);
-            for (Long moduleId :
-                    moduleIds) {
+            for (Long moduleId : moduleIds) {
                 RoleModulePO po = new RoleModulePO();
                 po.setModuleId(moduleId);
                 po.setRoleId(roleId);
                 toSaveData.add(po);
             }
+            // 删除拥有该角色的用户缓存
+            String roleUserKey = RedisConstant.CACHE_ROLE_USER + roleId;
+            Set<String> userIds = stringRedisTemplate.opsForSet().members(roleUserKey);
+            if (CollectionUtil.isEmpty(userIds)) {
+                continue;
+            }
+            needToDelUserKeys.addAll(userIds.stream().map(userId->RedisConstant.CACHE_USER_MODULE + userId).toList());
         }
+        // 删除拥有该角色的用户缓存
+        stringRedisTemplate.delete(needToDelUserKeys);
+
         toSaveData.forEach(data -> {
             try {
                 roleModuleMapper.insert(data);
