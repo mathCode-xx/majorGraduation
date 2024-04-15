@@ -47,8 +47,14 @@ public class ModuleController {
 
     @GetMapping("user/current")
     public Result<List<ModuleRespDTO>> getModuleFromCurrentUser(
-            @RequestHeader(value = "token",required = false) String token) {
+            @RequestHeader(value = "token", required = false) String token) {
         UserPO user = tokenService.getUserInfoFromToken(token);
         return Results.success(moduleService.getModuleByUser(user.getUserId()));
+    }
+
+    @DeleteMapping("batch")
+    public Result<Void> delete(@RequestParam("moduleIds") List<Long> request) {
+        moduleService.delete(request);
+        return Results.success();
     }
 }

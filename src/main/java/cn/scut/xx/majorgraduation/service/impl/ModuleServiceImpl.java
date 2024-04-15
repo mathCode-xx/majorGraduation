@@ -7,10 +7,12 @@ import cn.scut.xx.majorgraduation.common.redis.constant.RedisConstant;
 import cn.scut.xx.majorgraduation.common.redis.utils.RedisUtils;
 import cn.scut.xx.majorgraduation.core.exception.ServiceException;
 import cn.scut.xx.majorgraduation.dao.mapper.ModuleMapper;
+import cn.scut.xx.majorgraduation.dao.mapper.RoleModuleMapper;
 import cn.scut.xx.majorgraduation.dao.po.*;
 import cn.scut.xx.majorgraduation.pojo.dto.req.ModuleSaveReqDTO;
 import cn.scut.xx.majorgraduation.pojo.dto.resp.ModuleRespDTO;
 import cn.scut.xx.majorgraduation.service.IModuleService;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ModuleServiceImpl extends ServiceImpl<ModuleMapper, ModulePO> implements IModuleService {
     private final StringRedisTemplate stringRedisTemplate;
+    private final RoleModuleMapper roleModuleMapper;
 
     @Override
     public List<ModuleRespDTO> getAll() {
@@ -106,6 +109,23 @@ public class ModuleServiceImpl extends ServiceImpl<ModuleMapper, ModulePO> imple
         stringRedisTemplate.delete(key);
         stringRedisTemplate.opsForList().rightPushAll(key, moduleIds);
         return result;
+    }
+
+    @Override
+    public void delete(List<Long> moduleIds) {
+        // 直接删除缓存和数据库
+        moduleIds.forEach(moduleId -> {
+            String key = RedisConstant.CACHE_MODULE + moduleId;
+            stringRedisTemplate.delete(key);
+        });
+        LambdaQueryWrapper<ModulePO> moduleQuery = new LambdaQueryWrapper<ModulePO>()
+                .in(ModulePO::getModuleId, moduleIds);
+        baseMapper.delete(moduleQuery);
+
+        // 删除role-module对应，这里只需要删除数据库，无需对缓存进行管理（也不好管）
+        LambdaQueryWrapper<RoleModulePO> roleModuleQuery = new LambdaQueryWrapper<RoleModulePO>()
+                .in(RoleModulePO::getModuleId, moduleIds);
+        roleModuleMapper.delete(roleModuleQuery);
     }
 
     private List<ModulePO> batchSelectById(List<Long> ids) {

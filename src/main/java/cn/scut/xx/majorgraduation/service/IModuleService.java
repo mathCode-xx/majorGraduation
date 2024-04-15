@@ -39,4 +39,11 @@ public interface IModuleService {
      * @return 数据
      */
     List<ModuleRespDTO> getByRole(Long roleId);
+
+    /**
+     * 删除模块信息
+     *
+     * @param moduleIds 模块id
+     */
+    void delete(List<Long> moduleIds);
 }
