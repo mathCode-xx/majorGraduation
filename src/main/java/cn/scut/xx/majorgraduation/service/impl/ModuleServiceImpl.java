@@ -64,7 +64,8 @@ public class ModuleServiceImpl extends ServiceImpl<ModuleMapper, ModulePO> imple
         if (hasKey != null && hasKey) {
             List<String> range = stringRedisTemplate.opsForList().range(key, 0, RedisConstant.MAX_SIZE);
             if (!CollectionUtil.isEmpty(range)) {
-                return range.stream().map(string -> JSONUtil.toBean(string, ModuleRespDTO.class)).toList();
+                List<ModulePO> modules = batchSelectById(range.stream().map(Long::parseLong).toList());
+                return BeanUtil.copyToList(modules, ModuleRespDTO.class);
             }
         }
         MPJLambdaWrapper<ModulePO> query = new MPJLambdaWrapper<>();
@@ -78,7 +79,9 @@ public class ModuleServiceImpl extends ServiceImpl<ModuleMapper, ModulePO> imple
         if (CollectionUtil.isEmpty(result)) {
             return result;
         }
-        stringRedisTemplate.opsForList().rightPushAll(key, result.stream().map(JSONUtil::toJsonStr).toList());
+        List<String> cacheValues = result.stream()
+                .map(module -> module.getModuleId().toString()).toList();
+        stringRedisTemplate.opsForList().rightPushAll(key, cacheValues);
         stringRedisTemplate.expire(key, RedisUtils.getRandomTime());
         return result;
 
