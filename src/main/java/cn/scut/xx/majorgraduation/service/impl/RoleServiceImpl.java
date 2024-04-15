@@ -120,7 +120,13 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, RolePO> implements 
                 toSaveData.add(po);
             }
         }
-        toSaveData.forEach(roleModuleMapper::insert);
+        toSaveData.forEach(data -> {
+            try {
+                roleModuleMapper.insert(data);
+            } catch (Exception e) {
+                log.debug(e.toString());
+            }
+        });
     }
 
     private List<Long> getIds(List<Map<String, Object>> maps) {
