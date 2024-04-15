@@ -125,7 +125,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, RolePO> implements 
             if (CollectionUtil.isEmpty(userIds)) {
                 continue;
             }
-            needToDelUserKeys.addAll(userIds.stream().map(userId->RedisConstant.CACHE_USER_MODULE + userId).toList());
+            needToDelUserKeys.addAll(userIds.stream().map(userId -> RedisConstant.CACHE_USER_MODULE + userId).toList());
         }
         // 删除拥有该角色的用户缓存
         stringRedisTemplate.delete(needToDelUserKeys);
@@ -178,7 +178,11 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, RolePO> implements 
         String roleUserKey = RedisConstant.CACHE_ROLE_USER + roleId;
         Set<String> users = stringRedisTemplate.opsForSet().members(roleUserKey);
         if (!CollectionUtil.isEmpty(users)) {
-            needToDelKeys.addAll(users);
+            List<String> userKeys = users
+                    .stream()
+                    .map(user -> RedisConstant.CACHE_USER_MODULE + user)
+                    .toList();
+            needToDelKeys.addAll(userKeys);
         }
         stringRedisTemplate.delete(needToDelKeys);
     }
