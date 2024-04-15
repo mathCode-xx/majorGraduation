@@ -3,6 +3,7 @@ package cn.scut.xx.majorgraduation.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.json.JSONUtil;
+import cn.scut.xx.majorgraduation.common.database.RoleStatusEnum;
 import cn.scut.xx.majorgraduation.common.redis.constant.RedisConstant;
 import cn.scut.xx.majorgraduation.common.redis.utils.RedisUtils;
 import cn.scut.xx.majorgraduation.core.exception.ServiceException;
@@ -74,7 +75,8 @@ public class ModuleServiceImpl extends ServiceImpl<ModuleMapper, ModulePO> imple
                 .leftJoin(RolePO.class, RolePO::getRoleId, RoleModulePO::getRoleId)
                 .leftJoin(UserRolePO.class, UserRolePO::getRoleId, RolePO::getRoleId)
                 .leftJoin(UserPO.class, UserPO::getUserId, UserRolePO::getUserId)
-                .eq(UserPO::getUserId, userId);
+                .eq(UserPO::getUserId, userId)
+                .eq(RolePO::getStatus, RoleStatusEnum.VALID);
         List<ModuleRespDTO> result = baseMapper.selectJoinList(ModuleRespDTO.class, query);
         if (CollectionUtil.isEmpty(result)) {
             return result;
