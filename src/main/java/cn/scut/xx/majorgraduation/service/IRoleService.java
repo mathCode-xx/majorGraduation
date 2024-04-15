@@ -45,7 +45,13 @@ public interface IRoleService {
      * 批量为角色授予模块权限
      *
      * @param request 请求参数
-     * @return
      */
     void batchAddModule(BatchAddRoleModuleReqDTO request);
+
+    /**
+     * 删除角色信息
+     *
+     * @param roleId 角色id
+     */
+    void delete(Long roleId);
 }

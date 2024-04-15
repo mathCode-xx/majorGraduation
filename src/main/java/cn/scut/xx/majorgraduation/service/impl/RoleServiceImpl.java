@@ -9,9 +9,11 @@ import cn.scut.xx.majorgraduation.core.exception.ServiceException;
 import cn.scut.xx.majorgraduation.dao.mapper.ModuleMapper;
 import cn.scut.xx.majorgraduation.dao.mapper.RoleMapper;
 import cn.scut.xx.majorgraduation.dao.mapper.RoleModuleMapper;
+import cn.scut.xx.majorgraduation.dao.mapper.UserRoleMapper;
 import cn.scut.xx.majorgraduation.dao.po.ModulePO;
 import cn.scut.xx.majorgraduation.dao.po.RoleModulePO;
 import cn.scut.xx.majorgraduation.dao.po.RolePO;
+import cn.scut.xx.majorgraduation.dao.po.UserRolePO;
 import cn.scut.xx.majorgraduation.pojo.dto.req.BatchAddRoleModuleReqDTO;
 import cn.scut.xx.majorgraduation.pojo.dto.req.RoleModuleRemoveReqDTO;
 import cn.scut.xx.majorgraduation.pojo.dto.req.RoleModuleSaveReqDTO;
@@ -24,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +42,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, RolePO> implements 
     private final RoleMapper roleMapper;
     private final ModuleMapper moduleMapper;
     private final RoleModuleMapper roleModuleMapper;
+    private final UserRoleMapper userRoleMapper;
     private final StringRedisTemplate stringRedisTemplate;
 
     @Override
@@ -137,6 +141,36 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, RolePO> implements 
                 log.debug(e.toString());
             }
         });
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void delete(Long roleId) {
+        int i = baseMapper.deleteById(roleId);
+        if (i <= 0) {
+            throw new ClientException("数据异常，该角色本不存在！");
+        }
+        LambdaQueryWrapper<RoleModulePO> roleModuleQuery = new LambdaQueryWrapper<>();
+        roleModuleQuery.eq(RoleModulePO::getRoleId, roleId);
+        roleModuleMapper.delete(roleModuleQuery);
+        LambdaQueryWrapper<UserRolePO> userRoleQuery = new LambdaQueryWrapper<>();
+        userRoleQuery.eq(UserRolePO::getRoleId, roleId);
+        userRoleMapper.delete(userRoleQuery);
+
+        // 删缓存
+        List<String> needToDelKeys = new ArrayList<>();
+        // 角色信息缓存
+        needToDelKeys.add(RedisConstant.CACHE_ROLE + roleId);
+        // 角色所具有模块权限信息
+        needToDelKeys.add(RedisConstant.CACHE_ROLE_MODULE + roleId);
+        // 已登录用户的缓存信息
+        needToDelKeys.add(RedisConstant.CACHE_ROLE_USER + roleId);
+        String roleUserKey = RedisConstant.CACHE_ROLE_USER + roleId;
+        Set<String> users = stringRedisTemplate.opsForSet().members(roleUserKey);
+        if (!CollectionUtil.isEmpty(users)) {
+            needToDelKeys.addAll(users);
+        }
+        stringRedisTemplate.delete(needToDelKeys);
     }
 
     private List<Long> getIds(List<Map<String, Object>> maps) {

@@ -27,6 +27,12 @@ public class RoleController {
         return Results.success(roleService.getAll());
     }
 
+    @DeleteMapping
+    public Result<Void> delete(@RequestParam("roleId") Long roleId) {
+        roleService.delete(roleId);
+        return Results.success();
+    }
+
     @PostMapping()
     public Result<Void> save(@RequestBody RoleSaveReqDTO request) {
         roleService.save(request);
