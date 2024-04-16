@@ -24,6 +24,12 @@ public class RoleController {
         return Results.success(roleService.getAll());
     }
 
+    @GetMapping("name")
+    public Result<Boolean> checkRoleName(@RequestParam("roleName") String roleName) {
+
+        return Results.success(roleService.checkRoleName(roleName));
+    }
+
     @DeleteMapping
     public Result<Void> delete(@RequestParam("roleId") Long roleId) {
         roleService.delete(roleId);

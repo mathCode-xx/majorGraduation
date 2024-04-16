@@ -54,7 +54,16 @@ public interface IRoleService {
 
     /**
      * 修改角色信息
+     *
      * @param roleUpdateReqDTO 请求参数
      */
     void update(RoleUpdateReqDTO roleUpdateReqDTO);
+
+    /**
+     * 检查角色名是否可用
+     *
+     * @param roleName 待检测的角色名
+     * @return 如果包含就返回true，反正返回false
+     */
+    boolean checkRoleName(String roleName);
 }

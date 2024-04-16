@@ -35,4 +35,10 @@ public class RedisConstant {
     private final static String TOKEN_PRI = PROJECTION_NAME + "token:";
     public final static String TOKEN_USER_INFO = TOKEN_PRI + "user:";
     public final static String TOKEN_INFO = TOKEN_PRI;
+
+    /**
+     * 去重
+     */
+    private final static String DUPLICATE_PRI = "duplicate:";
+    public final static String DUPLICATE_ROLE_NAME = DUPLICATE_PRI + "role:name";
 }

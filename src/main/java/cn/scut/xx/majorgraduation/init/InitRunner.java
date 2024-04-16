@@ -64,6 +64,11 @@ public class InitRunner implements ApplicationRunner {
         });
         stringRedisTemplate.delete(RedisConstant.CACHE_ROLE);
         stringRedisTemplate.opsForValue().multiSet(cache);
+
+        // 设置一个role-name集合，用于去重
+        stringRedisTemplate.delete(RedisConstant.DUPLICATE_ROLE_NAME);
+        String[] roleNames = roles.stream().map(RolePO::getRoleName).toArray(String[]::new);
+        stringRedisTemplate.opsForSet().add(RedisConstant.DUPLICATE_ROLE_NAME, roleNames);
     }
 
     private void initSysRoleModuleCache() {

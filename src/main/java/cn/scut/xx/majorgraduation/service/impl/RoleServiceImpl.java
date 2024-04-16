@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static cn.scut.xx.majorgraduation.core.errorcode.BaseErrorCode.ROLE_NAME_EXIST;
+
 /**
  * @author 徐鑫
  */
@@ -44,9 +46,13 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, RolePO> implements 
 
     @Override
     public void save(RoleSaveReqDTO roleSaveReqDTO) {
+        if (this.checkRoleName(roleSaveReqDTO.getRoleName())) {
+            throw new ClientException(ROLE_NAME_EXIST);
+        }
         RolePO role = BeanUtil.toBean(roleSaveReqDTO, RolePO.class);
         try {
             baseMapper.insert(role);
+            stringRedisTemplate.opsForSet().add(RedisConstant.DUPLICATE_ROLE_NAME, role.getRoleName());
         } catch (Exception e) {
             String errorCode = ExceptionUtil.getErrorCode(e);
             if (errorCode.contains(ExceptionUtil.UNIQUE_ERROR)) {
@@ -144,7 +150,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, RolePO> implements 
     public void delete(Long roleId) {
         int i = baseMapper.deleteById(roleId);
         if (i <= 0) {
-            throw new ClientException("数据异常，该角色本不存在！");
+            throw new ClientException(ROLE_NAME_EXIST);
         }
         LambdaQueryWrapper<RoleModulePO> roleModuleQuery = new LambdaQueryWrapper<>();
         roleModuleQuery.eq(RoleModulePO::getRoleId, roleId);
@@ -164,6 +170,12 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, RolePO> implements 
             throw new ClientException("数据异常，该角色本不存在，无法修改！");
         }
         deleteRoleCache(roleUpdateReqDTO.getRoleId());
+    }
+
+    @Override
+    public boolean checkRoleName(String roleName) {
+        Boolean check = stringRedisTemplate.opsForSet().isMember(RedisConstant.DUPLICATE_ROLE_NAME, roleName);
+        return check != null && check;
     }
 
     private void deleteRoleCache(Long roleId) {
