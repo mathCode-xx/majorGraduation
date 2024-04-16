@@ -74,6 +74,7 @@ public class InitRunner implements ApplicationRunner {
             List<String> value = cache.computeIfAbsent(roleModule.getRoleId(), k -> new ArrayList<>());
             value.add(roleModule.getModuleId().toString());
         });
+        stringRedisTemplate.delete(RedisConstant.CACHE_ROLE_MODULE);
         redisCacheList(cache, RedisConstant.CACHE_ROLE_MODULE);
     }
 
@@ -84,13 +85,13 @@ public class InitRunner implements ApplicationRunner {
             Set<String> value = cache.computeIfAbsent(userRole.getRoleId(), k -> new HashSet<>());
             value.add(userRole.getUserId().toString());
         });
+        stringRedisTemplate.delete(RedisConstant.CACHE_ROLE_USER);
         redisCacheSet(cache, RedisConstant.CACHE_ROLE_USER);
     }
 
     private void redisCacheList(Map<Long, List<String>> data, String priKey) {
         data.forEach((mapKey, mapValue) -> {
             String key = priKey + mapKey;
-            stringRedisTemplate.delete(key);
             stringRedisTemplate.opsForList().rightPushAll(key, mapValue);
         });
     }
@@ -98,7 +99,6 @@ public class InitRunner implements ApplicationRunner {
     private void redisCacheSet(Map<Long, Set<String>> data, String priKey) {
         data.forEach((mapKey, mapValue) -> {
             String key = priKey + mapKey;
-            stringRedisTemplate.delete(key);
             stringRedisTemplate.opsForSet().add(key, mapValue.toArray(new String[0]));
         });
     }
