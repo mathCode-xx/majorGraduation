@@ -61,4 +61,11 @@ public interface IUserService {
      * @return user info
      */
     UserRespDTO getUserInfoFromToken(String token);
+
+    /**
+     * 修改用户信息
+     *
+     * @param userUpdateReqDTO 新数据
+     */
+    void updateUserInfo(UserUpdateReqDTO userUpdateReqDTO);
 }

@@ -57,4 +57,10 @@ public class UserController {
         return Results.success(userService.searchList(request));
     }
 
+    @PutMapping
+    public Result<Void> update(@RequestBody UserUpdateReqDTO request) {
+        userService.updateUserInfo(request);
+        return Results.success();
+    }
+
 }
