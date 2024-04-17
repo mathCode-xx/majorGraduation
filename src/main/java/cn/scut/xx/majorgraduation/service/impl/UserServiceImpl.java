@@ -159,6 +159,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserPO> implements 
         }
     }
 
+    @Override
+    public void deleteUser(Long userId) {
+        int deleteNum = baseMapper.deleteById(userId);
+        if (deleteNum <= 0) {
+            throw new ClientException("数据出错，该用户不存在！");
+        }
+    }
+
     private void fillQueryCondition(LambdaQueryWrapper<UserPO> query, UserSearchReqDTO userSearchReqDTO) {
         if (userSearchReqDTO.getUserId() != null) {
             // 有id就是精确查询

@@ -63,4 +63,10 @@ public class UserController {
         return Results.success();
     }
 
+    @DeleteMapping
+    public Result<Void> delete(@RequestParam("userId") Long userId) {
+        userService.deleteUser(userId);
+        return Results.success();
+    }
+
 }

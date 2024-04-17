@@ -68,4 +68,11 @@ public interface IUserService {
      * @param userUpdateReqDTO 新数据
      */
     void updateUserInfo(UserUpdateReqDTO userUpdateReqDTO);
+
+    /**
+     * 根据id删除用户
+     *
+     * @param userId 用户id
+     */
+    void deleteUser(Long userId);
 }
