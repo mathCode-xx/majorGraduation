@@ -19,7 +19,7 @@ public class RedisUtils {
     }
 
     public static String getCacheTokenKey(Long userId) {
-        if (userId == null || userId == 0L) {
+        if (userId == null) {
             return null;
         }
         return RedisConstant.TOKEN_INFO + userId;
