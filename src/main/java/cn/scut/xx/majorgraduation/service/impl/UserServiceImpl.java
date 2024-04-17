@@ -6,6 +6,7 @@ import cn.scut.xx.majorgraduation.common.database.UserStatusEnum;
 import cn.scut.xx.majorgraduation.common.redis.constant.RedisConstant;
 import cn.scut.xx.majorgraduation.common.redis.utils.RedisUtils;
 import cn.scut.xx.majorgraduation.common.utils.MD5Utils;
+import cn.scut.xx.majorgraduation.common.utils.ValidateUtil;
 import cn.scut.xx.majorgraduation.core.exception.ClientException;
 import cn.scut.xx.majorgraduation.dao.mapper.RoleMapper;
 import cn.scut.xx.majorgraduation.dao.mapper.UserMapper;
@@ -30,7 +31,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
-import static cn.scut.xx.majorgraduation.core.errorcode.BaseErrorCode.USER_NAME_EXIST_ERROR;
+import static cn.scut.xx.majorgraduation.core.errorcode.BaseErrorCode.*;
 
 /**
  * @author 徐鑫
@@ -47,8 +48,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserPO> implements 
 
     @Override
     public void save(UserSaveReqDTO userSaveReqDTO) {
-        if (!checkUserNameIfNot(userSaveReqDTO.getUserName())) {
-            throw new ClientException(USER_NAME_EXIST_ERROR);
+//        if (!checkUserNameIfNot(userSaveReqDTO.getUserName())) {
+//            throw new ClientException(USER_NAME_EXIST_ERROR);
+//        }
+        if (!ValidateUtil.validatePhoneNumber(userSaveReqDTO.getPhoneNumber())) {
+            throw new ClientException(PHONE_VERIFY_ERROR);
         }
         RLock lock = redissonClient.getLock(RedisConstant.LOCK_USER_REGISTER);
         try {
@@ -59,7 +63,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserPO> implements 
                 try {
                     baseMapper.insert(user);
                 } catch (DuplicateKeyException ex) {
-                    throw new ClientException(USER_NAME_EXIST_ERROR);
+                    throw new ClientException(PHONE_NUMBER_EXIST_ERROR);
                 }
                 userRegisterCachePenetrationBloomFilter.add(user.getUserName());
                 return;
