@@ -22,8 +22,10 @@ public enum BaseErrorCode implements IErrorCode {
     IDEMPOTENT_TOKEN_DELETE_ERROR("A000201", "幂等Token已被使用或失效"),
     TOKEN_DELETED_ERROR("A000202", "token已失效，请重新登录"),
 
-    // ========== 二级宏观错误码 系统请求操作频繁 ==========
-    FLOW_LIMIT_ERROR("A000300", "当前系统繁忙，请稍后再试"),
+    // ========== 二级宏观错误码 机构管理系统 ==========
+    ORGANIZATION_ERROR("A000300", "机构管理系统异常"),
+    ORGANIZATION_NOT_EXIST_ERROR("A000301", "数据异常！该机构不存在"),
+    ORGANIZATION_SAVE_NO_MANAGER_ERROR("A000302", "管理员id不存在"),
 
     // ========== 二级宏观错误码 权限管理模块 ==========
     ROLE_NAME_EXIST("A000401", "角色名已存在"),
