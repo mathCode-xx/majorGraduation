@@ -32,6 +32,24 @@ public class UserPO extends BasePO {
     private String userName;
 
     /**
+     * 身份证
+     */
+    @TableField("id_card")
+    private String idCard;
+
+    /**
+     * 邮箱
+     */
+    @TableField("email")
+    private String email;
+
+    /**
+     * 微信
+     */
+    @TableField("wechat_id")
+    private String wechatId;
+
+    /**
      * 密码，经MD5加密
      */
     @TableField("password")

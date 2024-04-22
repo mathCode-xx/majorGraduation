@@ -25,6 +25,21 @@ public class UserRespDTO {
     private String phoneNumber;
 
     /**
+     * 身份证
+     */
+    private String idCard;
+
+    /**
+     * 邮箱
+     */
+    private String email;
+
+    /**
+     * 微信
+     */
+    private String wechatId;
+
+    /**
      * 最近登录时间
      */
     private LocalDateTime loginTime;
