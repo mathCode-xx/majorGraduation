@@ -35,9 +35,18 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
     @Override
     public List<OrganizationRespDTO> get(OrganizationSearchReqDTO searchConditions) {
         MPJLambdaWrapper<OrganizationPO> mpj = new MPJLambdaWrapper<>();
+        if (StrUtil.isNotEmpty(searchConditions.getName())) {
+            mpj.like(OrganizationPO::getName, searchConditions.getName());
+        }
+        if (StrUtil.isNotEmpty(searchConditions.getCode())) {
+            mpj.like(OrganizationPO::getCode, searchConditions.getCode());
+        }
         mpj.selectAll(OrganizationPO.class)
                 .selectAssociation(UserPO.class, OrganizationRespDTO::getManager)
                 .leftJoin(UserPO.class, UserPO::getUserId, OrganizationPO::getManagerId);
+        if (StrUtil.isNotEmpty(searchConditions.getManagerName())) {
+            mpj.like(UserPO::getUserName, searchConditions.getManagerName());
+        }
         return baseMapper.selectJoinList(OrganizationRespDTO.class, mpj);
     }
 
