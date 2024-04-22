@@ -1,6 +1,7 @@
 package cn.scut.xx.majorgraduation.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.scut.xx.majorgraduation.core.exception.ClientException;
@@ -19,7 +20,11 @@ import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import static cn.scut.xx.majorgraduation.core.errorcode.BaseErrorCode.ORGANIZATION_NOT_EXIST_ERROR;
 import static cn.scut.xx.majorgraduation.core.errorcode.BaseErrorCode.ORGANIZATION_SAVE_NO_MANAGER_ERROR;
@@ -34,20 +39,45 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
 
     @Override
     public List<OrganizationRespDTO> get(OrganizationSearchReqDTO searchConditions) {
+        boolean useSearch = false;
         MPJLambdaWrapper<OrganizationPO> mpj = new MPJLambdaWrapper<>();
-        if (StrUtil.isNotEmpty(searchConditions.getName())) {
-            mpj.like(OrganizationPO::getName, searchConditions.getName());
-        }
-        if (StrUtil.isNotEmpty(searchConditions.getCode())) {
-            mpj.like(OrganizationPO::getCode, searchConditions.getCode());
-        }
         mpj.selectAll(OrganizationPO.class)
                 .selectAssociation(UserPO.class, OrganizationRespDTO::getManager)
                 .leftJoin(UserPO.class, UserPO::getUserId, OrganizationPO::getManagerId);
+        if (StrUtil.isNotEmpty(searchConditions.getName())) {
+            useSearch = true;
+            mpj.like(OrganizationPO::getName, searchConditions.getName());
+        }
+        if (StrUtil.isNotEmpty(searchConditions.getCode())) {
+            useSearch = true;
+            mpj.like(OrganizationPO::getCode, searchConditions.getCode());
+        }
         if (StrUtil.isNotEmpty(searchConditions.getManagerName())) {
+            useSearch = true;
             mpj.like(UserPO::getUserName, searchConditions.getManagerName());
         }
-        return baseMapper.selectJoinList(OrganizationRespDTO.class, mpj);
+        List<OrganizationRespDTO> result = baseMapper.selectJoinList(OrganizationRespDTO.class, mpj);
+        if (useSearch && CollectionUtil.isNotEmpty(result)) {
+            // 如果使用了模糊查询，需要把查询到的机构拼接上其子机构
+            List<Long> ids = result.stream().map(OrganizationRespDTO::getId).toList();
+            List<Long> parentIds = result.stream().map(OrganizationRespDTO::getUpperId).toList();
+            MPJLambdaWrapper<OrganizationPO> subMpj = new MPJLambdaWrapper<>();
+            subMpj.selectAll(OrganizationPO.class)
+                    .selectAssociation(UserPO.class, OrganizationRespDTO::getManager)
+                    .leftJoin(UserPO.class, UserPO::getUserId, OrganizationPO::getManagerId);
+            subMpj.in(OrganizationPO::getUpperId, ids);
+            subMpj.or().in(OrganizationPO::getId, parentIds);
+            List<OrganizationRespDTO> subResult = baseMapper.selectJoinList(OrganizationRespDTO.class, subMpj);
+            result.addAll(subResult);
+        }
+        // 去重
+        result = result.stream().collect(
+                Collectors.collectingAndThen(
+                        Collectors.toCollection(() ->
+                                new TreeSet<>(Comparator.comparing(OrganizationRespDTO::getId))),
+                        ArrayList::new));
+
+        return result;
     }
 
     @Override
