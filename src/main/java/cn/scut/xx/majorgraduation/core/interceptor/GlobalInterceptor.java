@@ -2,6 +2,7 @@ package cn.scut.xx.majorgraduation.core.interceptor;
 
 import cn.hutool.core.util.StrUtil;
 import cn.scut.xx.majorgraduation.common.utils.SpringUtil;
+import cn.scut.xx.majorgraduation.common.utils.UserContext;
 import cn.scut.xx.majorgraduation.core.exception.ClientException;
 import cn.scut.xx.majorgraduation.dao.po.UserPO;
 import cn.scut.xx.majorgraduation.service.ITokenService;
@@ -32,6 +33,7 @@ public class GlobalInterceptor implements HandlerInterceptor {
         if (StrUtil.isNotEmpty(token)) {
             UserPO user = tokenService.getUserInfoFromToken(token);
             log.info("登录用户：" + user.getUserName());
+            UserContext.setUser(user);
             return true;
         } else {
             throw new ClientException(TOKEN_DELETED_ERROR);

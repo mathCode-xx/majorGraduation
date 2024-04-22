@@ -6,6 +6,7 @@ import cn.scut.xx.majorgraduation.common.database.UserStatusEnum;
 import cn.scut.xx.majorgraduation.common.redis.constant.RedisConstant;
 import cn.scut.xx.majorgraduation.common.redis.utils.RedisUtils;
 import cn.scut.xx.majorgraduation.common.utils.MD5Utils;
+import cn.scut.xx.majorgraduation.common.utils.UserContext;
 import cn.scut.xx.majorgraduation.common.utils.ValidateUtil;
 import cn.scut.xx.majorgraduation.core.exception.ClientException;
 import cn.scut.xx.majorgraduation.dao.mapper.RoleMapper;
@@ -48,9 +49,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserPO> implements 
 
     @Override
     public void save(UserSaveReqDTO userSaveReqDTO) {
-//        if (!checkUserNameIfNot(userSaveReqDTO.getUserName())) {
-//            throw new ClientException(USER_NAME_EXIST_ERROR);
-//        }
         if (!ValidateUtil.validatePhoneNumber(userSaveReqDTO.getPhoneNumber())) {
             throw new ClientException(PHONE_VERIFY_ERROR);
         }
@@ -142,7 +140,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserPO> implements 
 
     @Override
     public UserRespDTO getUserInfoFromToken(String token) {
-        UserPO user = tokenService.getUserInfoFromToken(token);
+        UserPO user = UserContext.getUser();
         return BeanUtil.toBean(user, UserRespDTO.class);
     }
 
@@ -152,7 +150,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserPO> implements 
         if (!StrUtil.isEmpty(userUpdateReqDTO.getPassword())) {
             newUser.setPassword(MD5Utils.encrypt(userUpdateReqDTO.getPassword()));
         }
-        int updateNum = 0;
+        int updateNum;
         try {
             updateNum = baseMapper.updateById(newUser);
         } catch (DuplicateKeyException e) {
