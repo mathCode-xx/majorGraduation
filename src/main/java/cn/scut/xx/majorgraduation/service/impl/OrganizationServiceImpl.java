@@ -43,8 +43,13 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
 
     @Override
     public void save(OrganizationSaveReqDTO toSaveData) {
-        // 检查管理员id是否存在
-        checkManagerExist(toSaveData.getManagerId());
+        if (toSaveData.getManagerId() != null) {
+            // 检查管理员id是否存在
+            checkManagerExist(toSaveData.getManagerId());
+        } else {
+            // 管理员可以在新增机构时不指定，如果不指定，则先设置为负数，毕竟用户id不可能为负数
+            toSaveData.setManagerId(-1L);
+        }
         baseMapper.insert(BeanUtil.toBean(toSaveData, OrganizationPO.class));
     }
 
