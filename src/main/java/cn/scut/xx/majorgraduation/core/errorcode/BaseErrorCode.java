@@ -26,6 +26,7 @@ public enum BaseErrorCode implements IErrorCode {
     ORGANIZATION_ERROR("A000300", "机构管理系统异常"),
     ORGANIZATION_NOT_EXIST_ERROR("A000301", "数据异常！该机构不存在"),
     ORGANIZATION_SAVE_NO_MANAGER_ERROR("A000302", "管理员id不存在"),
+    ORGANIZATION_CODE_EXIST_ERROR("A000303", "机构代码已存在"),
 
     // ========== 二级宏观错误码 权限管理模块 ==========
     ROLE_NAME_EXIST("A000401", "角色名已存在"),

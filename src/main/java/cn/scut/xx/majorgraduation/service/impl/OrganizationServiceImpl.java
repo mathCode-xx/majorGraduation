@@ -18,6 +18,7 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,8 +27,7 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import static cn.scut.xx.majorgraduation.core.errorcode.BaseErrorCode.ORGANIZATION_NOT_EXIST_ERROR;
-import static cn.scut.xx.majorgraduation.core.errorcode.BaseErrorCode.ORGANIZATION_SAVE_NO_MANAGER_ERROR;
+import static cn.scut.xx.majorgraduation.core.errorcode.BaseErrorCode.*;
 
 /**
  * @author 徐鑫
@@ -89,7 +89,11 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
             // 管理员可以在新增机构时不指定，如果不指定，则先设置为负数，毕竟用户id不可能为负数
             toSaveData.setManagerId(-1L);
         }
-        baseMapper.insert(BeanUtil.toBean(toSaveData, OrganizationPO.class));
+        try {
+            baseMapper.insert(BeanUtil.toBean(toSaveData, OrganizationPO.class));
+        } catch (DuplicateKeyException e) {
+            throw new ClientException(ORGANIZATION_CODE_EXIST_ERROR);
+        }
     }
 
     @Override
