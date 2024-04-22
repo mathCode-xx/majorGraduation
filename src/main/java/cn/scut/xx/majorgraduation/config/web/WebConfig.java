@@ -3,6 +3,7 @@ package cn.scut.xx.majorgraduation.config.web;
 import cn.scut.xx.majorgraduation.core.interceptor.GlobalInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -14,7 +15,9 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new GlobalInterceptor());
+        InterceptorRegistration interceptor = registry.addInterceptor(new GlobalInterceptor());
+        interceptor.addPathPatterns("*");
+        interceptor.excludePathPatterns("/login");
     }
 
     @Override
