@@ -1,6 +1,7 @@
 package cn.scut.xx.majorgraduation.core.interceptor;
 
 import cn.hutool.core.util.StrUtil;
+import cn.scut.xx.majorgraduation.common.utils.HttpUtil;
 import cn.scut.xx.majorgraduation.common.utils.SpringUtil;
 import cn.scut.xx.majorgraduation.common.utils.UserContext;
 import cn.scut.xx.majorgraduation.core.exception.ClientException;
@@ -28,6 +29,9 @@ public class GlobalInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
         StringBuffer url = request.getRequestURL();
         log.info("访问接口：" + url.toString());
+        if (HttpUtil.OPTIONS_METHOD.equals(request.getMethod())) {
+            return true;
+        }
         // 检测是否登录
         String token = request.getHeader("token");
         if (StrUtil.isNotEmpty(token)) {
