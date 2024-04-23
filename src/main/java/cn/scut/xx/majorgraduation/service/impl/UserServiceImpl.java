@@ -169,6 +169,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserPO> implements 
         }
     }
 
+    @Override
+    public void updateCurrent(UserUpdateCurrentInfoReqDTO userUpdateCurrentInfoReqDTO) {
+        UserPO newUser = BeanUtil.toBean(userUpdateCurrentInfoReqDTO, UserPO.class);
+        newUser.setUserId(UserContext.getUser().getUserId());
+        int updateNum;
+        try {
+            updateNum = baseMapper.updateById(newUser);
+        } catch (DuplicateKeyException e) {
+            throw new ClientException("数据冲突，请检查手机号是否重复！");
+        }
+        if (updateNum <= 0) {
+            throw new ClientException("数据出错，用户不存在！");
+        }
+    }
+
     private void fillQueryCondition(LambdaQueryWrapper<UserPO> query, UserSearchReqDTO userSearchReqDTO) {
         if (userSearchReqDTO.getUserId() != null) {
             // 有id就是精确查询

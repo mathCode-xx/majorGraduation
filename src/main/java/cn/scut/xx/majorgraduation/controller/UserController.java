@@ -69,4 +69,10 @@ public class UserController {
         return Results.success();
     }
 
+    @PutMapping("current")
+    public Result<Void> updateCurrent(@RequestBody UserUpdateCurrentInfoReqDTO request) {
+        userService.updateCurrent(request);
+        return Results.success();
+    }
+
 }
