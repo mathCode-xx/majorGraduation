@@ -16,6 +16,7 @@ import cn.scut.xx.majorgraduation.dao.po.RolePO;
 import cn.scut.xx.majorgraduation.dao.po.UserPO;
 import cn.scut.xx.majorgraduation.dao.po.UserRolePO;
 import cn.scut.xx.majorgraduation.pojo.dto.req.*;
+import cn.scut.xx.majorgraduation.pojo.dto.resp.LoginRespDTO;
 import cn.scut.xx.majorgraduation.pojo.dto.resp.UserRespDTO;
 import cn.scut.xx.majorgraduation.service.ITokenService;
 import cn.scut.xx.majorgraduation.service.IUserService;
@@ -121,7 +122,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserPO> implements 
     }
 
     @Override
-    public String login(UserLoginReqDTO userLoginReqDTO) {
+    public LoginRespDTO login(UserLoginReqDTO userLoginReqDTO) {
         String md5 = MD5Utils.encrypt(userLoginReqDTO.getPassword());
         LambdaQueryWrapper<UserPO> query = new LambdaQueryWrapper<>();
         query.eq(UserPO::getPhoneNumber, userLoginReqDTO.getPhoneNumber())
@@ -135,7 +136,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserPO> implements 
         if (StrUtil.isEmpty(token)) {
             token = tokenService.generateTokenByUser(user);
         }
-        return token;
+        String flushToken = tokenService.generateFlushTokenByUser(user);
+        LoginRespDTO result = new LoginRespDTO();
+        result.setToken(token);
+        result.setFlushToken(flushToken);
+        return result;
     }
 
     @Override
@@ -182,6 +187,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserPO> implements 
         if (updateNum <= 0) {
             throw new ClientException("数据出错，用户不存在！");
         }
+    }
+
+    @Override
+    public String flushToken(String flushToken) {
+        Long userId = tokenService.getUserIdFromFlushToken(flushToken);
+        if (userId == null) {
+            throw new ClientException(FLUSH_TOKEN_DELETED_ERROR);
+        }
+        UserPO user = baseMapper.selectById(userId);
+        return tokenService.generateTokenByUser(user);
     }
 
     private void fillQueryCondition(LambdaQueryWrapper<UserPO> query, UserSearchReqDTO userSearchReqDTO) {

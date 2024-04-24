@@ -20,7 +20,8 @@ public enum BaseErrorCode implements IErrorCode {
     // ========== 二级宏观错误码 系统请求缺少幂等Token ==========
     IDEMPOTENT_TOKEN_NULL_ERROR("A000200", "幂等Token为空"),
     IDEMPOTENT_TOKEN_DELETE_ERROR("A000201", "幂等Token已被使用或失效"),
-    TOKEN_DELETED_ERROR("A000202", "token已失效，请重新登录"),
+    FLUSH_TOKEN_DELETED_ERROR("A000202", "登录过期，请重新登录"),
+    TOKEN_DELETED_ERROR("A000203", "token已失效，请重新登录"),
 
     // ========== 二级宏观错误码 机构管理系统 ==========
     ORGANIZATION_ERROR("A000300", "机构管理系统异常"),

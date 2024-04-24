@@ -18,6 +18,7 @@ public class WebConfig implements WebMvcConfigurer {
         InterceptorRegistration interceptor = registry.addInterceptor(new GlobalInterceptor());
         interceptor.addPathPatterns("/**");
         interceptor.excludePathPatterns("/user/login");
+        interceptor.excludePathPatterns("/user/token");
     }
 
     @Override

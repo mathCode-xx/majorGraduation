@@ -1,6 +1,7 @@
 package cn.scut.xx.majorgraduation.service;
 
 import cn.scut.xx.majorgraduation.pojo.dto.req.*;
+import cn.scut.xx.majorgraduation.pojo.dto.resp.LoginRespDTO;
 import cn.scut.xx.majorgraduation.pojo.dto.resp.UserRespDTO;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
@@ -52,7 +53,7 @@ public interface IUserService {
      * @param userLoginReqDTO 登录参数
      * @return token
      */
-    String login(UserLoginReqDTO userLoginReqDTO);
+    LoginRespDTO login(UserLoginReqDTO userLoginReqDTO);
 
     /**
      * 从token中获取用户信息
@@ -82,4 +83,12 @@ public interface IUserService {
      * @param userUpdateCurrentInfoReqDTO 需要修改成的信息
      */
     void updateCurrent(UserUpdateCurrentInfoReqDTO userUpdateCurrentInfoReqDTO);
+
+    /**
+     * 刷新token
+     *
+     * @param flushToken flush token
+     * @return token
+     */
+    String flushToken(String flushToken);
 }
