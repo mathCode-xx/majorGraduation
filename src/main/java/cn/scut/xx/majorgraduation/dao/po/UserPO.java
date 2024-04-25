@@ -50,6 +50,12 @@ public class UserPO extends BasePO {
     private String wechatId;
 
     /**
+     * 所属机构id，-1表明未分配机构
+     */
+    @TableField("organization_id")
+    private Long organizationId;
+
+    /**
      * 密码，经MD5加密
      */
     @TableField("password")

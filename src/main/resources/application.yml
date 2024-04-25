@@ -36,3 +36,6 @@ jwt:
   secret: 123456
 server:
   port: 8081
+
+# 数据加解密密钥，长度必须为16的整数倍
+secret: 123dafdggafhdahh

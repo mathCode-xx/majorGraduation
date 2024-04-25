@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import cn.hutool.jwt.JWT;
 import cn.scut.xx.majorgraduation.common.redis.utils.RedisUtils;
+import cn.scut.xx.majorgraduation.common.utils.EncryptUtil;
 import cn.scut.xx.majorgraduation.common.utils.JwtUtil;
 import cn.scut.xx.majorgraduation.core.exception.ClientException;
 import cn.scut.xx.majorgraduation.dao.po.UserPO;
@@ -50,6 +51,7 @@ public class TokenServiceImpl implements ITokenService {
 
     @Override
     public String generateTokenByUser(UserPO user) {
+        EncryptUtil.encryptUser(user);
         String userJson = JSONUtil.toJsonStr(user);
         Map<String, Object> payload = new HashMap<>(1);
         payload.put(CLAIMS_USER_KEY, userJson);

@@ -36,6 +36,12 @@ public class RolePO extends BasePO {
     private String remark;
 
     /**
+     * 所属机构id，-1表明为所有机构共有
+     */
+    @TableField("organization_id")
+    private Long organizationId;
+
+    /**
      * 角色状态，请见系统字典kind=3
      */
     @TableField("status")
