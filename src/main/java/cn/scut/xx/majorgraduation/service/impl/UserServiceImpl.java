@@ -47,6 +47,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserPO> implements 
     private final RoleMapper roleMapper;
     private final ITokenService tokenService;
     private final StringRedisTemplate stringRedisTemplate;
+    private final RBloomFilter<String> phoneNumberCachePenetrationBloomFilter;
 
     @Override
     public void save(UserSaveReqDTO userSaveReqDTO) {
@@ -197,6 +198,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserPO> implements 
         }
         UserPO user = baseMapper.selectById(userId);
         return tokenService.generateTokenByUser(user);
+    }
+
+    @Override
+    public boolean checkPhoneExist(String phoneNumber) {
+        boolean isPhone = ValidateUtil.validatePhoneNumber(phoneNumber);
+        if (!isPhone) {
+            throw new ClientException(PHONE_VERIFY_ERROR);
+        }
+        boolean exist = phoneNumberCachePenetrationBloomFilter.contains(phoneNumber);
+        if (!exist) {
+            return false;
+        }
+        LambdaQueryWrapper<UserPO> query = new LambdaQueryWrapper<>();
+        query.eq(UserPO::getPhoneNumber, phoneNumber);
+        UserPO user = baseMapper.selectOne(query);
+        return user != null;
     }
 
     private void fillQueryCondition(LambdaQueryWrapper<UserPO> query, UserSearchReqDTO userSearchReqDTO) {

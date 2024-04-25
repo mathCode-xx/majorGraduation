@@ -20,4 +20,14 @@ public class RedisBloomFilterConfiguration {
         cachePenetrationBloomFilter.tryInit(100000000L, 0.001);
         return cachePenetrationBloomFilter;
     }
+
+    /**
+     * 防止用户注册查询数据库的布隆过滤器
+     */
+    @Bean
+    public RBloomFilter<String> phoneNumberCachePenetrationBloomFilter(RedissonClient redissonClient) {
+        RBloomFilter<String> cachePenetrationBloomFilter = redissonClient.getBloomFilter("phoneNumberCachePenetrationBloomFilter");
+        cachePenetrationBloomFilter.tryInit(2000000L, 0.01);
+        return cachePenetrationBloomFilter;
+    }
 }

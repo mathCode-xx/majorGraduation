@@ -91,4 +91,12 @@ public interface IUserService {
      * @return token
      */
     String flushToken(String flushToken);
+
+    /**
+     * 检测手机号是否已存在
+     *
+     * @param phoneNumber 待检测的手机号
+     * @return 检测结果
+     */
+    boolean checkPhoneExist(String phoneNumber);
 }

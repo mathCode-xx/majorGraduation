@@ -82,4 +82,10 @@ public class UserController {
         return Results.success(token);
     }
 
+    @GetMapping("check/phone")
+    public Result<Boolean> checkPhoneExist(@RequestParam("phoneNumber") String phoneNumber) {
+        boolean checkResult = userService.checkPhoneExist(phoneNumber);
+        return Results.success(checkResult);
+    }
+
 }
