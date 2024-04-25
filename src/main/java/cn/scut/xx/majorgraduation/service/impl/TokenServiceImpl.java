@@ -1,13 +1,14 @@
 package cn.scut.xx.majorgraduation.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import cn.hutool.jwt.JWT;
 import cn.scut.xx.majorgraduation.common.redis.utils.RedisUtils;
-import cn.scut.xx.majorgraduation.common.utils.EncryptUtil;
 import cn.scut.xx.majorgraduation.common.utils.JwtUtil;
 import cn.scut.xx.majorgraduation.core.exception.ClientException;
 import cn.scut.xx.majorgraduation.dao.po.UserPO;
+import cn.scut.xx.majorgraduation.pojo.dto.resp.UserRespDTO;
 import cn.scut.xx.majorgraduation.service.ITokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,8 +52,8 @@ public class TokenServiceImpl implements ITokenService {
 
     @Override
     public String generateTokenByUser(UserPO user) {
-        EncryptUtil.encryptUser(user);
-        String userJson = JSONUtil.toJsonStr(user);
+        UserRespDTO userDto = BeanUtil.toBean(user, UserRespDTO.class);
+        String userJson = JSONUtil.toJsonStr(userDto);
         Map<String, Object> payload = new HashMap<>(1);
         payload.put(CLAIMS_USER_KEY, userJson);
         String token = JwtUtil.generateToken(TOKEN_EXP_TIME, payload);

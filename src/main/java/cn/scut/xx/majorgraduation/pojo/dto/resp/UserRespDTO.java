@@ -25,6 +25,11 @@ public class UserRespDTO {
     private String phoneNumber;
 
     /**
+     * 机构id
+     */
+    private Long organizationId;
+
+    /**
      * 身份证
      */
     private String idCard;
