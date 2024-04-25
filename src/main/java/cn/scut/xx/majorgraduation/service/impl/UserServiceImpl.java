@@ -29,6 +29,7 @@ import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -41,18 +42,18 @@ import static cn.scut.xx.majorgraduation.core.errorcode.BaseErrorCode.*;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl extends ServiceImpl<UserMapper, UserPO> implements IUserService {
-    private final RBloomFilter<String> userRegisterCachePenetrationBloomFilter;
     private final RedissonClient redissonClient;
     private final UserRoleMapper userRoleMapper;
     private final RoleMapper roleMapper;
     private final ITokenService tokenService;
     private final StringRedisTemplate stringRedisTemplate;
     private final RBloomFilter<String> phoneNumberCachePenetrationBloomFilter;
+    private final RBloomFilter<String> idCardCachePenetrationBloomFilter;
 
     @Override
     public void save(UserSaveReqDTO userSaveReqDTO) {
-        if (!ValidateUtil.validatePhoneNumber(userSaveReqDTO.getPhoneNumber())) {
-            throw new ClientException(PHONE_VERIFY_ERROR);
+        if (checkIdCardOrPhoneExist(userSaveReqDTO.getIdCard(), userSaveReqDTO.getPhoneNumber())) {
+            throw new ClientException(ID_CARD_OR_PHONE_NUMBER_EXIST_ERROR);
         }
         RLock lock = redissonClient.getLock(RedisConstant.LOCK_USER_REGISTER);
         try {
@@ -63,20 +64,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserPO> implements 
                 try {
                     baseMapper.insert(user);
                 } catch (DuplicateKeyException ex) {
-                    throw new ClientException(PHONE_NUMBER_EXIST_ERROR);
+                    throw new ClientException(ID_CARD_OR_PHONE_NUMBER_EXIST_ERROR);
                 }
-                userRegisterCachePenetrationBloomFilter.add(user.getUserName());
+                phoneNumberCachePenetrationBloomFilter.add(user.getPhoneNumber());
+                idCardCachePenetrationBloomFilter.add(user.getIdCard());
                 return;
             }
             throw new ClientException(USER_NAME_EXIST_ERROR);
         } finally {
             lock.unlock();
         }
-    }
-
-    @Override
-    public boolean checkUserNameIfNot(String userName) {
-        return !userRegisterCachePenetrationBloomFilter.contains(userName);
     }
 
     @Override
@@ -202,18 +199,35 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserPO> implements 
 
     @Override
     public boolean checkPhoneExist(String phoneNumber) {
-        boolean isPhone = ValidateUtil.validatePhoneNumber(phoneNumber);
-        if (!isPhone) {
-            throw new ClientException(PHONE_VERIFY_ERROR);
-        }
-        boolean exist = phoneNumberCachePenetrationBloomFilter.contains(phoneNumber);
-        if (!exist) {
-            return false;
-        }
+        return checkIdCardOrPhoneExist(null, phoneNumber);
+    }
+
+    @Override
+    public boolean checkIdCardExist(String idCard) {
+        return checkIdCardOrPhoneExist(idCard, null);
+    }
+
+    private boolean checkIdCardOrPhoneExist(@Nullable String idCard, @Nullable String phoneNumber) {
         LambdaQueryWrapper<UserPO> query = new LambdaQueryWrapper<>();
-        query.eq(UserPO::getPhoneNumber, phoneNumber);
-        UserPO user = baseMapper.selectOne(query);
-        return user != null;
+        if (StrUtil.isNotEmpty(idCard)) {
+            if (!ValidateUtil.validateIdCard(idCard)) {
+                throw new ClientException(ID_CARD_VERIFY_ERROR);
+            }
+            if (!idCardCachePenetrationBloomFilter.contains(idCard)) {
+                return false;
+            }
+            query.eq(UserPO::getIdCard, idCard);
+        }
+        if (StrUtil.isNotEmpty(phoneNumber)) {
+            if (!ValidateUtil.validatePhoneNumber(phoneNumber)) {
+                throw new ClientException(PHONE_VERIFY_ERROR);
+            }
+            if (!phoneNumberCachePenetrationBloomFilter.contains(phoneNumber)) {
+                return false;
+            }
+            query.eq(UserPO::getPhoneNumber, phoneNumber);
+        }
+        return baseMapper.selectOne(query) != null;
     }
 
     private void fillQueryCondition(LambdaQueryWrapper<UserPO> query, UserSearchReqDTO userSearchReqDTO) {

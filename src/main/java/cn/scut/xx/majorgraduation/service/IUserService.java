@@ -16,15 +16,6 @@ public interface IUserService {
      */
     void save(UserSaveReqDTO userSaveReqDTO);
 
-
-    /**
-     * 检查userName是否存在
-     *
-     * @param userName 待检测的userName
-     * @return 如果不存在返回true
-     */
-    boolean checkUserNameIfNot(String userName);
-
     /**
      * 给某个用户添加角色信息
      *
@@ -99,4 +90,12 @@ public interface IUserService {
      * @return 检测结果
      */
     boolean checkPhoneExist(String phoneNumber);
+
+    /**
+     * 检测用户身份证号是否已注册
+     *
+     * @param idCard 身份证号
+     * @return 检测结果
+     */
+    boolean checkIdCardExist(String idCard);
 }

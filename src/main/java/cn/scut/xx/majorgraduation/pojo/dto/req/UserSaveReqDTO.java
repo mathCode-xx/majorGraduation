@@ -22,4 +22,19 @@ public class UserSaveReqDTO {
      * 手机号
      */
     private String phoneNumber;
+
+    /**
+     * 身份证
+     */
+    private String idCard;
+
+    /**
+     * 个人邮箱
+     */
+    private String email;
+
+    /**
+     * 微信号
+     */
+    private String wechatId;
 }

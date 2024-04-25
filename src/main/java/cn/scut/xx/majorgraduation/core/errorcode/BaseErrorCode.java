@@ -16,6 +16,9 @@ public enum BaseErrorCode implements IErrorCode {
     USER_NAME_EXIST_ERROR("A000111", "用户名已存在"),
     PHONE_NUMBER_EXIST_ERROR("A000112", "手机号已存在"),
     PHONE_VERIFY_ERROR("A000113", "手机格式不正确"),
+    ID_CARD_VERIFY_ERROR("A000114", "身份证格式不正确"),
+    ID_CARD_EXIST_ERROR("A000115", "身份证已存在"),
+    ID_CARD_OR_PHONE_NUMBER_EXIST_ERROR("A000116", "身份证或手机号已存在"),
 
     // ========== 二级宏观错误码 系统请求缺少幂等Token ==========
     IDEMPOTENT_TOKEN_NULL_ERROR("A000200", "幂等Token为空"),
