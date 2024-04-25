@@ -6,6 +6,8 @@ import cn.hutool.json.JSONUtil;
 import cn.scut.xx.majorgraduation.common.database.RoleStatusEnum;
 import cn.scut.xx.majorgraduation.common.redis.constant.RedisConstant;
 import cn.scut.xx.majorgraduation.common.redis.utils.RedisUtils;
+import cn.scut.xx.majorgraduation.common.utils.UserUtil;
+import cn.scut.xx.majorgraduation.core.exception.ClientException;
 import cn.scut.xx.majorgraduation.core.exception.ServiceException;
 import cn.scut.xx.majorgraduation.dao.mapper.ModuleMapper;
 import cn.scut.xx.majorgraduation.dao.mapper.RoleModuleMapper;
@@ -26,6 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static cn.scut.xx.majorgraduation.core.errorcode.BaseErrorCode.AUTH_LIMIT;
 
 /**
  * @author 徐鑫
@@ -49,6 +53,9 @@ public class ModuleServiceImpl extends ServiceImpl<ModuleMapper, ModulePO> imple
 
     @Override
     public void save(ModuleSaveReqDTO moduleSaveReqDTO) {
+        if (UserUtil.loginIsSuperMan()) {
+            throw new ClientException(AUTH_LIMIT);
+        }
         ModulePO toInsert = BeanUtil.toBean(moduleSaveReqDTO, ModulePO.class);
         if (moduleSaveReqDTO.getUpperModuleId() != null
                 && moduleSaveReqDTO.getUpperModuleId() != 0) {
@@ -123,6 +130,9 @@ public class ModuleServiceImpl extends ServiceImpl<ModuleMapper, ModulePO> imple
 
     @Override
     public void delete(List<Long> moduleIds) {
+        if (UserUtil.loginIsSuperMan()) {
+            throw new ClientException(AUTH_LIMIT);
+        }
         // 直接删除缓存和数据库
         moduleIds.forEach(moduleId -> {
             String key = RedisConstant.CACHE_MODULE + moduleId;

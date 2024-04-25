@@ -31,6 +31,7 @@ public enum BaseErrorCode implements IErrorCode {
 
     // ========== 二级宏观错误码 权限管理模块 ==========
     ROLE_NAME_EXIST("A000401", "角色名已存在"),
+    AUTH_LIMIT("A000402", "权限不足"),
 
     // ========== 一级宏观错误码 系统执行出错 ==========
     SERVICE_ERROR("B000001", "系统执行出错"),
