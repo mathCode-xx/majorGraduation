@@ -23,6 +23,7 @@ import cn.scut.xx.majorgraduation.service.IUserService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import lombok.RequiredArgsConstructor;
 import org.redisson.api.RBloomFilter;
 import org.redisson.api.RLock;
@@ -109,10 +110,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserPO> implements 
 
     @Override
     public Page<UserRespDTO> searchList(UserSearchReqDTO userSearchReqDTO) {
-        LambdaQueryWrapper<UserPO> query = new LambdaQueryWrapper<>();
+        MPJLambdaWrapper<UserPO> query = new MPJLambdaWrapper<>();
         fillQueryCondition(query, userSearchReqDTO);
-        Page<UserPO> page = new Page<>(userSearchReqDTO.getCurrent(), userSearchReqDTO.getSize());
-        baseMapper.selectPage(page, query);
+        query.selectAll(UserPO.class)
+                .selectCollection(RolePO.class, UserRespDTO::getRoles)
+                .leftJoin(UserRolePO.class, UserRolePO::getUserId, UserPO::getUserId)
+                .leftJoin(RolePO.class, RolePO::getRoleId, UserRolePO::getRoleId);
+        Page<UserRespDTO> page = baseMapper.selectJoinPage(
+                new Page<>(userSearchReqDTO.getCurrent(), userSearchReqDTO.getSize()),
+                UserRespDTO.class,
+                query);
         Page<UserRespDTO> result = new Page<>();
         BeanUtil.copyProperties(page, result);
         result.setRecords(BeanUtil.copyToList(page.getRecords(), UserRespDTO.class));
@@ -230,7 +237,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserPO> implements 
         return baseMapper.selectOne(query) != null;
     }
 
-    private void fillQueryCondition(LambdaQueryWrapper<UserPO> query, UserSearchReqDTO userSearchReqDTO) {
+    private void fillQueryCondition(MPJLambdaWrapper<UserPO> query, UserSearchReqDTO userSearchReqDTO) {
         if (userSearchReqDTO.getUserId() != null) {
             // 有id就是精确查询
             query.eq(UserPO::getUserId, userSearchReqDTO.getUserId());

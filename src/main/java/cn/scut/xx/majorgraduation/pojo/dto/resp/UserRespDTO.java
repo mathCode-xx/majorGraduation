@@ -3,6 +3,7 @@ package cn.scut.xx.majorgraduation.pojo.dto.resp;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author 徐鑫
@@ -53,4 +54,6 @@ public class UserRespDTO {
      * 用户状态，见系统字典kind=1，0表示有效，1表示无效
      */
     private Integer status;
+
+    private List<RoleRespDTO> roles;
 }
